@@ -55,6 +55,46 @@ function Load-Profile($id) {
   }
 }
 
+
+function Get-ContentType([string]$path) {
+  $ext = [System.IO.Path]::GetExtension($path).ToLowerInvariant()
+  switch ($ext) {
+    '.html' { return 'text/html; charset=utf-8' }
+    '.htm'  { return 'text/html; charset=utf-8' }
+    '.js'   { return 'application/javascript; charset=utf-8' }
+    '.css'  { return 'text/css; charset=utf-8' }
+    '.json' { return 'application/json; charset=utf-8' }
+    '.svg'  { return 'image/svg+xml' }
+    '.png'  { return 'image/png' }
+    '.jpg'  { return 'image/jpeg' }
+    '.jpeg' { return 'image/jpeg' }
+    '.webp' { return 'image/webp' }
+    '.gif'  { return 'image/gif' }
+    '.ico'  { return 'image/x-icon' }
+    default { return 'application/octet-stream' }
+  }
+}
+
+function Send-StaticFile($ctx, [string]$filePath) {
+  if (-not (Test-Path $filePath -PathType Leaf)) {
+    $bytes = [System.Text.Encoding]::UTF8.GetBytes('404')
+    $ctx.Response.StatusCode = 404
+    $ctx.Response.ContentType = 'text/plain; charset=utf-8'
+    $ctx.Response.ContentLength64 = $bytes.Length
+    $ctx.Response.OutputStream.Write($bytes,0,$bytes.Length)
+    $ctx.Response.Close()
+    return
+  }
+  $bytes = [System.IO.File]::ReadAllBytes($filePath)
+  $ctx.Response.StatusCode = 200
+  $ctx.Response.ContentType = Get-ContentType $filePath
+  $ctx.Response.Headers.Add('Cache-Control','no-store, no-cache, must-revalidate, max-age=0')
+  $ctx.Response.Headers.Add('Access-Control-Allow-Origin','*')
+  $ctx.Response.ContentLength64 = $bytes.Length
+  $ctx.Response.OutputStream.Write($bytes,0,$bytes.Length)
+  $ctx.Response.Close()
+}
+
 function Send-Json($ctx, $obj, $status = 200) {
   $json = $obj | ConvertTo-Json -Depth 10 -Compress
   $data = [Text.Encoding]::UTF8.GetBytes($json)
@@ -265,6 +305,26 @@ while($listener.IsListening){
       $ctx.Response.Headers.Add('Access-Control-Allow-Headers','Content-Type')
       $ctx.Response.Close()
       continue
+    }
+
+
+    if ($req.HttpMethod -eq 'GET' -and -not $path.StartsWith('/api/')) {
+      $rel = $path.TrimStart('/')
+      if ([string]::IsNullOrWhiteSpace($rel)) { $rel = 'index.html' }
+      if ($rel -match '\.\.') {
+        $bytes = [System.Text.Encoding]::UTF8.GetBytes('400')
+        $ctx.Response.StatusCode = 400
+        $ctx.Response.ContentType = 'text/plain; charset=utf-8'
+        $ctx.Response.ContentLength64 = $bytes.Length
+        $ctx.Response.OutputStream.Write($bytes,0,$bytes.Length)
+        $ctx.Response.Close()
+        continue
+      }
+      $candidate = Join-Path $root $rel
+      if (Test-Path $candidate -PathType Leaf) {
+        Send-StaticFile $ctx $candidate
+        continue
+      }
     }
 
     if ($path -eq '/api/health') {

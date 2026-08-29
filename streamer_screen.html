@@ -1,0 +1,1341 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SOOP 콘텐츠 메이커 - CORE BUILD 4</title>
+<script defer src="https://static.sooplive.com/asset/app/extension-helper/soop-extension-sdk.js"></script>
+<style>
+*{box-sizing:border-box} :root{--bg:#07111d;--panel:#0d1d2d;--panel2:#10283a;--line:#28495f;--text:#f7fbff;--muted:#97b2c5;--cyan:#4ed4ff;--green:#7df0ae;--orange:#ffb45c;--red:#ff7188;--purple:#c494ff}
+body{margin:0;background:radial-gradient(circle at 8% 5%,#16334d 0,transparent 28%),radial-gradient(circle at 95% 10%,#372557 0,transparent 25%),var(--bg);color:var(--text);font-family:Arial,"Noto Sans KR",sans-serif;min-height:100vh}
+button,input,select{font:inherit} button{cursor:pointer}.app{max-width:1180px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:25px;background:linear-gradient(145deg,#1ec7ff,#7257ff);box-shadow:0 8px 30px #1ec7ff33}.brand h1{font-size:24px;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}.status{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#091722;color:var(--muted);font-size:12px;font-weight:800}.status.ok{color:var(--green);border-color:#2e7651}
+.hero{position:relative;overflow:hidden;border:1px solid #315b77;border-radius:22px;padding:24px;background:linear-gradient(125deg,#0f2b40ee,#101d31ee 55%,#291c3eee)}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-120px;background:radial-gradient(circle,#79dbff38,transparent 68%)}.eyebrow{color:var(--cyan);font-size:12px;font-weight:900;letter-spacing:.12em}.hero h2{font-size:30px;line-height:1.25;margin:8px 0}.hero p{max-width:720px;color:#b9d0df;line-height:1.6;margin:0}.steps{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.step{padding:7px 10px;border-radius:999px;background:#071522aa;border:1px solid #2b4c63;color:#9fbdcf;font-size:12px}.step.on{color:#fff;border-color:#49c9f0;background:#12374d}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.card{background:#0a1826e8;border:1px solid var(--line);border-radius:18px;padding:16px;min-width:0}.card h3{margin:0 0 4px;font-size:17px}.desc{color:var(--muted);font-size:12px;line-height:1.5}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}.field.full{grid-column:1/-1}.field label{display:block;color:#a9c4d6;font-size:11px;margin-bottom:5px;font-weight:700}.field input,.field select{width:100%;border:1px solid #355870;border-radius:10px;background:#071521;color:white;padding:10px 11px;outline:none}.field input:focus,.field select:focus{border-color:#58d7ff;box-shadow:0 0 0 3px #46cfff16}.primary,.secondary,.danger{border:0;border-radius:11px;padding:11px 14px;font-weight:900}.primary{background:linear-gradient(135deg,#25bce9,#4077ee);color:#fff}.secondary{background:#19344a;color:#d9effc;border:1px solid #355e79}.danger{background:#4c2130;color:#ff9fb0;border:1px solid #723347}.wide{width:100%}.actions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}.hint{margin-top:9px;padding:9px 11px;border-radius:10px;background:#08131e;border:1px dashed #31536a;color:#8fb0c4;font-size:11px;line-height:1.5}.profilePreview{display:flex;gap:12px;align-items:center;margin-top:13px;padding:12px;border-radius:14px;background:linear-gradient(135deg,#0c2131,#111a29);border:1px solid #2e4d63}.avatar{width:64px;height:64px;border-radius:18px;object-fit:cover;background:#17334a;border:2px solid #4ecfff}.avatar.small{width:42px;height:42px;border-radius:12px}.profilePreview b{display:block;font-size:17px}.profilePreview span{color:var(--muted);font-size:11px}.auto{margin-top:10px;padding:10px;border-radius:11px;background:#0a2018;border:1px solid #245c42;color:#8decb4;font-size:12px}.auto.warn{background:#281d0b;border-color:#68501f;color:#ffd786}
+.themes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.theme{position:relative;border:1px solid #35546b;border-radius:13px;padding:13px 10px;min-height:84px;background:#0b1926;color:#fff;text-align:left}.theme.active{outline:2px solid #58d8ff;border-color:#58d8ff}.theme b{display:block}.theme small{display:block;color:#a5bfd0;margin-top:5px}.theme.heroTheme{background:linear-gradient(145deg,#0d3950,#242d55)}.theme.battleTheme{background:linear-gradient(145deg,#2e3027,#151b19)}.theme.funTheme{background:linear-gradient(145deg,#39233e,#233654)}
+.roomCode{font-size:28px;letter-spacing:.12em;font-weight:900;color:#73e7ff;margin:10px 0}.roomPanel{margin-top:12px;border-radius:15px;padding:14px;background:linear-gradient(120deg,#0a2232,#151d31);border:1px solid #2d536d}.roomMeta{display:flex;gap:8px;flex-wrap:wrap}.chip{font-size:11px;padding:6px 8px;border-radius:999px;background:#071521;border:1px solid #315268;color:#abd0e6}.members{display:grid;gap:7px;margin-top:10px}.member{display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center;padding:8px;border-radius:12px;background:#071522;border:1px solid #243f52}.member b{font-size:13px}.member small{display:block;color:#819eb2;margin-top:2px}.me{color:#7df0ae;font-size:10px;font-weight:900}.contentPreview{grid-column:1/-1}.contentCards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}.content{min-height:98px;border:1px solid #31516a;border-radius:14px;padding:12px;background:#081722}.content .ico{font-size:25px}.content b{display:block;margin-top:6px}.content small{color:#88a7bb}.content.locked{opacity:.58}.footer{margin-top:14px;color:#738fa3;font-size:11px;text-align:center}.hidden{display:none!important}
+@media(max-width:850px){.grid{grid-template-columns:1fr}.contentPreview{grid-column:auto}.contentCards{grid-template-columns:repeat(2,1fr)}.themes{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero h2{font-size:25px}}
+
+.managerBar{display:grid;grid-template-columns:1fr 180px auto auto;gap:8px;margin:12px 0}
+.managerBar input,.managerBar select,.roomSettings input{border:1px solid #355870;border-radius:10px;background:#071521;color:#fff;padding:9px 10px;min-width:0}
+.hostTools{margin-top:12px;padding:12px;border:1px solid #2b5870;border-radius:13px;background:#091c29}
+.hostToolsTitle{font-size:12px;font-weight:900;color:#78ddff;margin-bottom:9px}
+.roomSettings{display:grid;grid-template-columns:1fr 120px auto;gap:8px}
+.member{grid-template-columns:42px minmax(150px,1fr) auto!important}
+.memberMain{min-width:0}.memberRight{display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.teamInput{width:100px;border:1px solid #31546b;border-radius:8px;background:#0a1a27;color:#fff;padding:6px 7px}
+.roleSelect{width:90px;border:1px solid #31546b;border-radius:8px;background:#0a1a27;color:#fff;padding:6px 7px}
+.miniBtn{border:1px solid #355e79;border-radius:8px;background:#17334a;color:#d9effc;padding:6px 8px;font-size:11px;font-weight:800}
+.miniBtn.dangerMini{border-color:#703144;background:#3e1b28;color:#ffabb9}
+.teamChip{font-size:10px;padding:5px 7px;border-radius:999px;background:#10293a;border:1px solid #31566e;color:#9fe7ff}
+.roleChip{font-size:10px;padding:5px 7px;border-radius:999px;background:#231d35;border:1px solid #58477a;color:#d8c3ff}
+.pager{display:flex;justify-content:center;align-items:center;gap:8px;margin-top:9px;font-size:11px;color:#9bb8ca}
+.emptyMembers{padding:18px;text-align:center;color:#809bad;border:1px dashed #2a475b;border-radius:12px}
+@media(max-width:850px){.managerBar{grid-template-columns:1fr 1fr}.roomSettings{grid-template-columns:1fr}.member{grid-template-columns:42px 1fr!important}.memberRight{grid-column:1/-1;justify-content:flex-start;padding-left:51px}}
+
+
+/* TEAM COLOR SYSTEM */
+.member.team-1{border-color:#2f9cff;background:linear-gradient(90deg,rgba(47,156,255,.14),rgba(5,18,31,.92) 34%)}
+.member.team-2{border-color:#ff5368;background:linear-gradient(90deg,rgba(255,83,104,.14),rgba(5,18,31,.92) 34%)}
+.member.team-3{border-color:#ffc84d;background:linear-gradient(90deg,rgba(255,200,77,.14),rgba(5,18,31,.92) 34%)}
+.member.team-4{border-color:#a875ff;background:linear-gradient(90deg,rgba(168,117,255,.14),rgba(5,18,31,.92) 34%)}
+.member.team-other{border-color:#49d6c8;background:linear-gradient(90deg,rgba(73,214,200,.12),rgba(5,18,31,.92) 34%)}
+.teamBadge{display:inline-flex;align-items:center;justify-content:center;min-width:44px;height:22px;padding:0 8px;margin-left:6px;border-radius:999px;font-size:11px;font-weight:900;border:1px solid rgba(255,255,255,.18);vertical-align:1px}
+.teamBadge.team-1{color:#d8efff;background:rgba(47,156,255,.2);border-color:#2f9cff}
+.teamBadge.team-2{color:#ffe1e6;background:rgba(255,83,104,.2);border-color:#ff5368}
+.teamBadge.team-3{color:#fff1c7;background:rgba(255,200,77,.18);border-color:#ffc84d}
+.teamBadge.team-4{color:#efe3ff;background:rgba(168,117,255,.2);border-color:#a875ff}
+.teamBadge.team-other{color:#d9fffb;background:rgba(73,214,200,.17);border-color:#49d6c8}
+.teamBadge.unassigned{color:#a8bacb;background:rgba(134,154,174,.11);border-color:#496075}
+
+
+/* BUILD 5 TEAM LOBBY */
+.roomSettings{grid-template-columns:1fr 110px 100px auto}
+.roomSettings select{border:1px solid #355870;border-radius:10px;background:#071521;color:#fff;padding:9px 10px}
+.teamSection{margin:10px 0 14px;border:1px solid #294a61;border-radius:14px;overflow:hidden;background:#07131d}
+.teamSectionTitle{display:flex;align-items:center;justify-content:space-between;padding:8px 12px;font-size:12px;font-weight:900;letter-spacing:.3px}
+.teamSectionTitle.team-1{background:rgba(47,156,255,.22);color:#dff2ff;border-bottom:1px solid #2f9cff}
+.teamSectionTitle.team-2{background:rgba(255,83,104,.2);color:#ffe6ea;border-bottom:1px solid #ff5368}
+.teamSectionTitle.team-3{background:rgba(255,200,77,.18);color:#fff2c9;border-bottom:1px solid #ffc84d}
+.teamSectionTitle.team-4{background:rgba(168,117,255,.2);color:#f0e4ff;border-bottom:1px solid #a875ff}
+.teamSectionTitle.team-other{background:rgba(73,214,200,.15);color:#dcfffb;border-bottom:1px solid #49d6c8}
+.teamSectionTitle.unassigned{background:#122534;color:#b9cfdd;border-bottom:1px solid #496075}
+.teamSection .member{border-radius:0!important;border-width:0 0 1px 0!important;margin:0!important}
+.teamSection .member:last-child{border-bottom:0!important}
+.teamSelect{width:104px;border:1px solid #31546b;border-radius:8px;background:#0a1a27;color:#fff;padding:6px 7px}
+.contentCards button.content{appearance:none;text-align:left;color:#fff;cursor:pointer;font:inherit}
+.contentCards .content{transition:.15s ease}
+.contentCards .content:hover{transform:translateY(-1px);border-color:#5d8eaa}
+.contentCards .content.selected{outline:2px solid #44d7ff;background:#0d2940;box-shadow:0 0 0 3px rgba(68,215,255,.1)}
+.contentCards .content:disabled{cursor:default}
+
+
+.teamCountFixed{display:flex;align-items:center;justify-content:center;border:1px solid #355870;border-radius:10px;background:#071521;color:#a9c9dc;padding:9px 10px;font-size:12px;font-weight:800}
+.member.team-1{border-color:#ff5368;background:linear-gradient(90deg,rgba(255,83,104,.15),rgba(5,18,31,.92) 34%)}
+.member.team-2{border-color:#2f9cff;background:linear-gradient(90deg,rgba(47,156,255,.15),rgba(5,18,31,.92) 34%)}
+.member.team-5{border-color:#45d483;background:linear-gradient(90deg,rgba(69,212,131,.13),rgba(5,18,31,.92) 34%)}
+.member.team-6{border-color:#ff974d;background:linear-gradient(90deg,rgba(255,151,77,.13),rgba(5,18,31,.92) 34%)}
+.member.team-7{border-color:#42d8e8;background:linear-gradient(90deg,rgba(66,216,232,.13),rgba(5,18,31,.92) 34%)}
+.member.team-8{border-color:#ff71c8;background:linear-gradient(90deg,rgba(255,113,200,.13),rgba(5,18,31,.92) 34%)}
+.teamBadge.team-1,.teamSectionTitle.team-1{border-color:#ff5368;background:rgba(255,83,104,.2);color:#ffe6ea}
+.teamBadge.team-2,.teamSectionTitle.team-2{border-color:#2f9cff;background:rgba(47,156,255,.2);color:#dff2ff}
+.teamBadge.team-5,.teamSectionTitle.team-5{border-color:#45d483;background:rgba(69,212,131,.18);color:#ddffeb}
+.teamBadge.team-6,.teamSectionTitle.team-6{border-color:#ff974d;background:rgba(255,151,77,.18);color:#ffeadb}
+.teamBadge.team-7,.teamSectionTitle.team-7{border-color:#42d8e8;background:rgba(66,216,232,.18);color:#dcfbff}
+.teamBadge.team-8,.teamSectionTitle.team-8{border-color:#ff71c8;background:rgba(255,113,200,.18);color:#ffe0f3}
+.bingoSetup{margin-top:12px;padding:14px;border:1px solid #31516a;border-radius:14px;background:#071722}
+.bingoSetup h4{margin:0 0 8px;font-size:14px}.bingoSetupGrid{display:grid;grid-template-columns:1fr 1fr auto;gap:8px;align-items:end}
+.bingoSetup label{display:grid;gap:5px;font-size:11px;color:#8fb0c5;font-weight:800}.bingoSetup select{border:1px solid #355870;border-radius:10px;background:#091a27;color:#fff;padding:9px 10px}.bingoReady{margin-top:8px;color:#79ddff;font-size:11px}
+
+
+/* BUILD 7 - REAL BINGO */
+.bingoPlay{margin-top:12px}
+.bingoMissionEditor{padding:14px;border:1px solid #31516a;border-radius:14px;background:#071722}
+.bingoMissionEditor h4{margin:0 0 7px}
+.bingoMissionEditor textarea{width:100%;resize:vertical;border:1px solid #355870;border-radius:10px;background:#06131e;color:#fff;padding:10px;line-height:1.45;box-sizing:border-box}
+.bingoBoards{display:grid;gap:14px;margin-top:12px}
+.bingoBoardWrap{border:1px solid #31516a;border-radius:14px;padding:12px;background:#071722}
+.bingoBoardHead{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:9px}
+.bingoBoardHead b{font-size:14px}.bingoBoardHead small{color:#88a7bb}
+.bingoGrid{display:grid;gap:6px}
+.bingoCell{min-height:72px;border:1px solid #31546b;border-radius:10px;background:#0b1d2b;color:#e9f7ff;padding:8px;font-size:12px;font-weight:750;line-height:1.3;text-align:center;cursor:pointer}
+.bingoCell:hover{border-color:#56cfff}
+.bingoCell.done{background:#173c31;border-color:#45d483;color:#dffff0;text-decoration:line-through}
+.bingoCell:disabled{cursor:default;opacity:.86}
+.bingoEmpty{padding:20px;border:1px dashed #355870;border-radius:14px;text-align:center;color:#8eacbf}
+
+
+/* BUILD 8 - DASHBOARD + SOOP API */
+.bingoDash{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.bingoDashCard{border:1px solid #31516a;border-radius:14px;background:#071722;padding:12px}
+.dashTitle{font-weight:900;font-size:13px;margin-bottom:8px;color:#d9f3ff}
+.rankList,.participantList{display:grid;gap:6px;max-height:250px;overflow:auto}
+.rankRow{display:grid;grid-template-columns:26px max-content max-content;justify-content:start;gap:7px;align-items:center;border:1px solid #29495f;border-radius:10px;padding:8px;background:#091c29}
+.rankNo{font-size:15px;font-weight:950;color:#70dcff;text-align:center}
+.rankMain b,.participantRow b{display:block;font-size:12px}.rankMain small,.participantRow small{display:block;color:#89a9bc;font-size:10px;margin-top:2px}
+.rankScore{font-weight:900;font-size:11px;text-align:right}.rankScore em{font-style:normal;color:#57e0a0}
+.soopApiPanel{margin-bottom:12px;border:1px solid #534575;border-radius:14px;background:#10152a;padding:12px}
+.apiHead{display:flex;justify-content:space-between;align-items:center;gap:8px}.apiStatus{font-size:10px;border:1px solid #594b79;border-radius:999px;padding:4px 7px;color:#c9b9ef}
+.apiStatus.ok{border-color:#2e7655;color:#9dffc6}.apiStatus.warn{border-color:#80652d;color:#ffd982}.apiStatus.bad{border-color:#7b3747;color:#ffadb9}
+.apiDesc{font-size:10px;color:#a99fc2;margin-top:5px}
+.donationSettings,.apiTestRow{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-top:9px}
+.donationSettings label{font-size:11px;color:#d5caef}.donationSettings input,.apiTestRow input{width:76px;border:1px solid #51466c;border-radius:8px;background:#090d1c;color:#fff;padding:6px}
+.apiTestRow span{font-size:10px;color:#b9add2}
+.donationLog{display:grid;gap:4px;margin-top:9px;max-height:110px;overflow:auto;font-size:10px;color:#b9c8d4}
+.donationLog div{border-top:1px solid rgba(255,255,255,.06);padding-top:4px}
+.bingoCell.lineDone{box-shadow:inset 0 0 0 2px rgba(255,213,84,.55)}
+@media(max-width:850px){.bingoDash{grid-template-columns:1fr}}
+
+
+/* BUILD 9 - BINGO MENU UI */
+.bingoPlay{position:relative}
+.bingoSubNav{position:sticky;top:0;z-index:6;display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin:0 0 10px;padding:8px;border:1px solid #29495f;border-radius:14px;background:#07131d}
+.bingoTab{border:1px solid #31546b;border-radius:10px;background:#0b1b28;color:#a9c4d5;padding:10px 8px;font-weight:900;cursor:pointer}
+.bingoTab.active{background:#12344c;border-color:#55cfff;color:#fff;box-shadow:inset 0 -2px 0 #55cfff}
+.bingoPane.hidden{display:none!important}
+.bingoPane{min-height:180px}
+#bingoPaneBoard .bingoBoards{margin-top:0}
+#bingoPaneMission .bingoMissionEditor,#bingoPaneSupport .soopApiPanel{margin:0}
+.contentPreview{scroll-margin-top:12px}
+@media(min-width:900px){
+  .app{max-width:1380px}
+  .bingoPlay{max-height:calc(100vh - 150px);overflow:auto;padding-right:4px}
+}
+
+
+/* BUILD 10 - ACTION FEEDBACK */
+.actionStatus{position:sticky;top:0;z-index:50;display:flex;align-items:center;gap:8px;margin:8px 0 10px;padding:8px 11px;border:1px solid #314c60;border-radius:10px;background:rgba(5,17,27,.95);font-size:11px;font-weight:900;backdrop-filter:blur(8px)}
+.actionDot{display:inline-flex;width:18px;height:18px;align-items:center;justify-content:center;border-radius:50%;border:2px solid #60798b;color:#8ea5b4;font-size:12px;line-height:1}
+.actionStatus.loading{border-color:#b88d39;color:#ffe095}.actionStatus.loading .actionDot{border-color:#ffbf3f;color:#ffbf3f;animation:statusSpin .8s linear infinite}
+.actionStatus.success{border-color:#2f8059;color:#a8ffd0}.actionStatus.success .actionDot{background:#35d982;border-color:#35d982;color:#062016}
+.actionStatus.error{border-color:#8d3f50;color:#ffb4c1}.actionStatus.error .actionDot{background:#ff5e76;border-color:#ff5e76;color:#27040a}
+@keyframes statusSpin{to{transform:rotate(360deg)}}
+button.busy{opacity:.72;cursor:wait!important;position:relative}
+button.actionSuccess{box-shadow:0 0 0 2px rgba(53,217,130,.35) inset!important;border-color:#35d982!important}
+button.actionError{box-shadow:0 0 0 2px rgba(255,94,118,.35) inset!important;border-color:#ff5e76!important}
+
+
+/* BUILD 11 - SUPPORT RULES */
+.bingoLocalStatus{display:flex;align-items:center;gap:8px;margin-bottom:8px;padding:8px 10px;border:1px solid #31516a;border-radius:10px;background:#081722;font-size:11px;font-weight:900}
+.localDot{width:18px;height:18px;border-radius:50%;border:2px solid #5c7588;display:inline-flex;align-items:center;justify-content:center}
+.bingoLocalStatus.loading{border-color:#aa7b2f;color:#ffe29a}.bingoLocalStatus.loading .localDot{border-color:#ffbf3f;color:#ffbf3f}
+.bingoLocalStatus.success{border-color:#2f8059;color:#a9ffd1}.bingoLocalStatus.success .localDot{background:#35d982;border-color:#35d982;color:#092315}
+.bingoLocalStatus.error{border-color:#8e3e50;color:#ffb5c1}.bingoLocalStatus.error .localDot{background:#ff5e76;border-color:#ff5e76;color:#2b0309}
+.donationRulesBox{margin-top:10px;padding:10px;border:1px solid #50446f;border-radius:10px;background:#0b1022}
+.ruleTitle{font-size:11px;font-weight:900;margin-bottom:7px;color:#d9cef3}
+.donationRules{display:grid;gap:6px}
+.donationRuleRow{display:grid;grid-template-columns:78px 140px 1fr 105px 74px auto;gap:6px;align-items:center}
+.donationRuleRow input,.donationRuleRow select{border:1px solid #51466c;border-radius:8px;background:#090d1c;color:#fff;padding:6px;min-width:0}
+.donationRuleRow button{border:1px solid #703144;border-radius:8px;background:#3e1b28;color:#ffabb9;padding:6px 8px}
+@media(max-width:850px){.donationRuleRow{grid-template-columns:1fr 1fr}.donationRuleRow button{grid-column:span 2}}
+
+
+/* BUILD 11.1 - SELECT INTERACTION FIX */
+select:focus,input:focus,textarea:focus{outline:2px solid rgba(83,207,255,.55);outline-offset:1px}
+
+.bingoViewInfo{margin-bottom:9px;padding:9px 11px;border:1px solid #31516a;border-radius:10px;background:#081722;color:#a9c7d8;font-size:11px;font-weight:800}
+.ownerBadge{display:inline-flex;align-items:center;padding:3px 7px;margin-left:6px;border-radius:999px;border:1px solid #45667b;background:#102535;color:#d9f4ff;font-size:10px}
+.bingoBoardWrap.mine{border-color:#45d483;box-shadow:inset 0 0 0 1px rgba(69,212,131,.15)}
+.bingoBoardWrap.mine .bingoBoardHead b{color:#b7ffd7}
+
+/* BUILD 12 - COMPACT DASHBOARD + PENDING EFFECT */
+.participantRow{display:grid;grid-template-columns:max-content minmax(0,1fr) max-content;gap:7px;align-items:center;border:1px solid #29495f;border-radius:10px;padding:7px 8px;background:#091c29}
+.participantRow>div{min-width:0;line-height:1.15}.participantRow b,.participantRow small{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rankRow{border:1px solid #29495f;border-radius:10px;padding:7px 8px;background:#091c29}
+.rankMain{display:flex;align-items:baseline;gap:5px}.rankMain small{margin:0!important}.rankScore{white-space:nowrap;line-height:1.1}
+.pendingEffect{margin:10px 0;padding:11px;border:1px solid #c27d2e;border-radius:12px;background:#241807;color:#ffe2a3}
+.pendingEffect.hidden{display:none!important}.pendingHead{display:flex;justify-content:space-between;gap:10px;align-items:center;font-weight:900}
+.pendingChoices,.lineChoices{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pendingChoices button,.lineChoices button{border:1px solid #7a5a2c;border-radius:8px;background:#31210b;color:#ffe7b0;padding:7px 9px;cursor:pointer}
+.bingoCell.pendingPick{border-color:#ffb83e!important;box-shadow:inset 0 0 0 2px rgba(255,184,62,.35);cursor:crosshair!important}
+.donationRuleRow .rulePick,.donationRuleRow .ruleTarget,.donationRuleRow .ruleEffect{min-width:0}
+@media(max-width:1000px){.donationRuleRow{grid-template-columns:90px 1fr 1fr}.donationRuleRow .rulePick,.donationRuleRow .ruleValue,.donationRuleRow button{grid-row:auto}}
+
+/* BUILD 13 - API SAFETY + MULTI USER SIMULATOR */
+.myApiIdentity{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:9px}
+.myApiIdentity>div{display:flex;justify-content:space-between;gap:8px;border:1px solid #3f3859;border-radius:9px;padding:8px;background:#0b1020;font-size:10px}
+.myApiIdentity b{color:#d8cef3}.myApiIdentity span{color:#9fc9dc;text-align:right}
+.hostDonationSimulator{margin-top:10px;padding:10px;border:1px solid #315a6f;border-radius:10px;background:#081722}
+.simTitle{font-size:11px;font-weight:900;color:#d9f5ff}.simDesc{font-size:10px;color:#86a7bb;margin-top:4px}
+.simRow{display:grid;grid-template-columns:1fr 90px auto;gap:7px;margin-top:8px}
+.simRow select,.simRow input{border:1px solid #31546b;border-radius:8px;background:#08131d;color:#fff;padding:7px}
+.ackOk{color:#89ffc0!important}.ackBad{color:#ff9cac!important}.ackWait{color:#ffd987!important}
+@media(max-width:800px){.myApiIdentity{grid-template-columns:1fr}.simRow{grid-template-columns:1fr}}
+
+</style>
+
+
+
+</head>
+<body>
+<div class="app">
+  <div class="top">
+    <div class="brand"><div class="logo">🎮</div><div><h1>SOOP 콘텐츠 메이커</h1><p>CORE BUILD 4 · 참가자/팀/재접속 관리</p></div></div>
+    <div id="sdkBadge" class="status">SOOP 연결 확인 중</div>
+  </div>
+  <div id="actionStatus" class="actionStatus idle"><span class="actionDot">○</span><span id="actionStatusText">준비됨</span></div>
+  <section class="hero">
+    <div class="eyebrow">BROADCAST CONTENT PLATFORM</div>
+    <h2>내 방송 프로필로 들어가고,<br>우리 팀만의 방에서 콘텐츠를 시작합니다.</h2>
+    <p>빙고·킬내기·핀볼·경마·의리 사다리를 하나의 방 안에서 쓰기 위한 새 기반입니다. 검증된 공용 방 기능은 그대로 유지하고, 방장이 참가자·팀·권한을 관리하고 같은 SOOP ID가 재접속했을 때 기존 자리를 복구하도록 CORE를 완성합니다.</p>
+    <div class="steps"><span class="step">1 프로필/방</span><span class="step">2 실시간 동기화</span><span class="step on">3 참가자 관리</span><span class="step on">4 빙고</span><span class="step">5 킬내기</span><span class="step">6 예능 콘텐츠</span><span class="step">7 방송 출력</span></div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h3>👤 내 스트리머 프로필</h3><div class="desc">프로필은 브라우저와 내 PC의 공용 저장소에 함께 저장합니다. 새 빌드/새 테스트 주소에서도 같은 SOOP ID면 다시 불러옵니다.</div>
+      <div id="autoBox" class="auto warn">SOOP 방송 정보 확인 중...</div>
+      <div class="formgrid">
+        <div class="field"><label>스트리머 이름</label><input id="profileName" placeholder="예: 김멘탈"></div>
+        <div class="field"><label>SOOP ID (자동 인식 기준)</label><input id="profileSoopId" placeholder="SOOP BJ ID"></div>
+        <div class="field full"><label>방송국 주소</label><input id="profileUrl" placeholder="예: https://www.sooplive.co.kr/station/... "></div>
+        <div class="field full"><label>프로필 사진</label><input id="profileImage" type="file" accept="image/*"></div>
+      </div>
+      <div class="actions"><button class="primary" id="saveProfile">프로필 저장</button><button class="secondary" id="useDetected">현재 방송 정보 사용</button></div>
+      <div class="profilePreview"><img id="previewImg" class="avatar" alt="프로필 미리보기"><div><b id="previewName">프로필 미등록</b><span id="previewId">SOOP ID를 등록해 주세요</span></div></div>
+      <div class="hint">프로필 사진도 SOOP ID와 함께 내 PC 공용 저장소에 저장됩니다. 최종 온라인 서버에서는 계정 프로필 저장 방식으로 이전할 예정입니다.</div>
+    </section>
+
+    <section id="roomLobbyCard" class="card">
+      <h3>🚪 방 만들기 / 참가하기</h3><div class="desc">A PC가 방을 만들고 다른 인터넷의 B PC가 같은 방 코드로 참가해 목록이 함께 보이는지 테스트합니다. 방에 들어간 뒤에는 새 방 만들기/참가 입력창이 자동으로 숨겨집니다.</div>
+      <div class="formgrid">
+        <div class="field full"><label>방 이름</label><input id="roomName" value="오늘의 콘텐츠 방"></div>
+        <div class="field"><label>최대 인원 (2~100)</label><input id="maxPlayers" type="number" min="2" max="100" value="8"></div>
+        <div class="field"><label>방 비밀번호 (선택)</label><input id="roomPassword" placeholder="없으면 비워두기"></div>
+      </div>
+      <div class="themes">
+        <button class="theme heroTheme active" data-theme="hero"><b>⚡ 히어로</b><small>밝은 SF · 빙고용</small></button>
+        <button class="theme battleTheme" data-theme="battle"><b>🎯 배틀</b><small>전술 HUD · 킬내기용</small></button>
+        <button class="theme funTheme" data-theme="fun"><b>🎪 예능</b><small>코믹 · 핀볼/경마용</small></button>
+      </div>
+      <div class="actions"><button class="primary" id="createRoom">새 방 만들기</button></div>
+      <div style="margin-top:14px;border-top:1px solid #28495f;padding-top:13px" class="formgrid">
+        <div class="field"><label>방 코드로 참가</label><input id="joinCode" placeholder="예: M8F4K2"></div>
+        <div class="field"><label>비밀번호</label><input id="joinPassword" placeholder="필요한 경우"></div>
+      </div>
+      <button class="secondary wide" id="joinRoom">방 참가하기</button>
+    </section>
+
+    <section id="activeRoomCard" class="card contentPreview hidden">
+      <h3>🛰️ 현재 방</h3>
+      <div class="roomPanel">
+        <div class="desc">방 코드</div><div id="activeCode" class="roomCode">------</div>
+        <div class="roomMeta"><span id="activeRoomName" class="chip"></span><span id="activeTheme" class="chip"></span><span id="activeCapacity" class="chip"></span><span id="syncChip" class="chip">실시간 동기화 중</span></div>
+
+        <div id="hostTools" class="hostTools hidden">
+          <div class="hostToolsTitle">👑 방장 관리</div>
+          <div class="roomSettings">
+            <input id="hostRoomName" placeholder="방 이름">
+            <input id="hostRoomMax" type="number" min="2" max="100" placeholder="최대 인원">
+            <div class="teamCountFixed">팀 슬롯 · 1팀 ~ 8팀</div>
+            <button id="saveRoomSettings" class="miniBtn">방 설정 저장</button>
+          </div>
+        </div>
+
+        <div class="managerBar">
+          <input id="memberSearch" placeholder="닉네임 / SOOP ID 검색">
+          <select id="memberTeamFilter"><option value="ALL">전체 팀</option></select>
+          <button id="copyRoomCode" class="miniBtn">방 코드 복사</button>
+          <button id="refreshMembers" class="miniBtn">↻ 새로고침</button>
+        </div>
+
+        <div id="members" class="members"></div>
+        <div id="memberPager" class="pager"></div>
+        <div class="actions"><button id="leaveRoom" class="danger">방 나가기</button></div>
+      </div>
+      <div class="hint">방장은 참가자를 팀 목록에서 배정하고 참가자/관전자 권한을 변경할 수 있습니다. 같은 SOOP ID로 다시 들어오면 기존 자리와 권한을 유지합니다.</div>
+    </section>
+
+    <section class="card contentPreview">
+      <h3>🎬 이 방에서 사용할 콘텐츠</h3><div class="desc" id="contentStatus">방장이 콘텐츠를 선택하면 참가자 모두에게 같은 선택이 표시됩니다.</div>
+      <div class="contentCards" id="contentCards">
+        <button class="content" data-content="bingo"><div class="ico">🟦</div><b>빙고</b><small>개인/팀 미션판</small></button>
+        <button class="content" data-content="kill"><div class="ico">🎯</div><b>킬내기</b><small>킬·사망·치킨 점수</small></button>
+        <button class="content" data-content="pinball"><div class="ico">🔴</div><b>핀볼</b><small>프로필 얼굴 공</small></button>
+        <button class="content" data-content="race"><div class="ico">🏇</div><b>경마</b><small>프로필 경주</small></button>
+        <button class="content" data-content="ladder"><div class="ico">🪜</div><b>의리 사다리</b><small>랜덤 벌칙/보상</small></button>
+      </div>
+      <div id="bingoSetup" class="bingoSetup hidden">
+        <h4>🟦 빙고 기본 설정</h4>
+        <div class="bingoSetupGrid">
+          <label>진행 방식<select id="bingoMode"><option value="team">팀 빙고</option><option value="individual">개인 빙고</option></select></label>
+          <label>빙고판 크기<select id="bingoSize">
+  <option value="3">3 × 3</option><option value="4">4 × 4</option><option value="5" selected>5 × 5</option>
+  <option value="6">6 × 6</option><option value="7">7 × 7</option><option value="8">8 × 8</option>
+  <option value="9">9 × 9</option><option value="10">10 × 10</option>
+</select></label>
+          <button id="saveBingoSettings" class="miniBtn">빙고 설정 저장</button>
+        </div>
+        <div id="bingoReady" class="bingoReady">다음 단계에서 실제 빙고판과 미션 기능을 연결합니다.</div>
+      </div>
+      <div id="bingoPlay" class="bingoPlay hidden">
+        <div id="pendingEffect" class="pendingEffect hidden"></div>
+        <div id="bingoLocalStatus" class="bingoLocalStatus"><span class="localDot">○</span><span id="bingoLocalStatusText">빙고 준비됨</span></div>
+        <div class="bingoSubNav">
+          <button class="bingoTab active" data-bingo-tab="board">🎯 빙고판</button>
+          <button class="bingoTab" data-bingo-tab="mission">📝 미션 관리</button>
+          <button class="bingoTab" data-bingo-tab="rank">🏆 순위/참가자</button>
+          <button class="bingoTab" data-bingo-tab="support">🎁 후원/API</button>
+        </div>
+        <div id="bingoPaneRank" class="bingoPane">
+        <div class="bingoDash">
+          <section class="bingoDashCard">
+            <div class="dashTitle">🏆 실시간 순위</div>
+            <div id="bingoRanking" class="rankList"></div>
+          </section>
+          <section class="bingoDashCard">
+            <div class="dashTitle">👥 참가자 현황</div>
+            <div id="bingoParticipants" class="participantList"></div>
+          </section>
+        </div>
+        </div>
+        <div id="bingoPaneSupport" class="bingoPane hidden">
+        <div id="soopApiPanel" class="soopApiPanel">
+          <div class="apiHead"><b>🎁 SOOP 별풍선 연동</b><span id="soopApiStatus" class="apiStatus">연결 확인 중</span></div>
+          <div class="apiDesc">각 스트리머 방송에서 받은 별풍선을 자기 개인/팀 빙고판에 적용합니다. 실제 후원 효과가 적용되면 방송 채팅에도 확인 메시지를 보내고, 서버 후원 로그에도 기록합니다.</div>
+          <div class="myApiIdentity">
+            <div><b>내 방송 기준</b><span id="myApiIdentityText">프로필 확인 중</span></div>
+            <div><b>채팅 확인 메시지</b><span id="chatAckStatus">대기</span></div>
+          </div>
+          <div id="hostDonationSimulator" class="hostDonationSimulator hidden">
+            <div class="simTitle">🧪 방장용 참가자 후원 시뮬레이터</div>
+            <div class="simDesc">실제 별풍선을 쏘지 않고, 선택한 참가자의 방송에서 후원이 들어온 것처럼 규칙을 테스트합니다.</div>
+            <div class="simRow">
+              <select id="simActor"></select>
+              <input id="simCount" type="number" min="1" value="30">
+              <button id="runSimDonation" class="miniBtn">선택 참가자로 테스트</button>
+            </div>
+          </div>
+          <div id="donationHostSettings" class="donationRulesBox hidden">
+            <div class="ruleTitle">후원 규칙 목록</div>
+            <div id="donationRules" class="donationRules"></div>
+            <button id="addDonationRule" class="miniBtn">+ 규칙 추가</button>
+            <button id="saveDonationRules" class="miniBtn">후원 규칙 저장</button>
+          </div>
+          <div class="apiTestRow">
+            <input id="donationTestCount" type="number" min="1" value="30">
+            <button id="testDonation" class="miniBtn">별풍선 수동 테스트</button>
+            <span id="donationRuleText"></span>
+          </div>
+          <div id="donationLog" class="donationLog"></div>
+        </div>
+        </div>
+        <div id="bingoPaneMission" class="bingoPane hidden">
+        <div id="bingoMissionEditor" class="bingoMissionEditor hidden">
+          <h4>📝 빙고 미션</h4>
+          <div class="desc">미션을 한 줄에 하나씩 입력하세요. 선택한 크기에 맞춰 필요한 미션 수가 달라집니다. 예: 5×5는 25개, 7×7은 49개.</div>
+          <textarea id="bingoMissions" rows="8" placeholder="예:&#10;킬 3회 하기&#10;궁극기로 2명 이상 처치&#10;게임 승리하기"></textarea>
+          <div class="actions">
+            <button id="fillSampleMissions" class="secondary">예시 미션 채우기</button>
+            <button id="generateBingo" class="primary">빙고판 생성</button>
+            <button id="reshuffleBingo" class="secondary">미션 다시 섞기</button>
+            <button id="resetBingoChecks" class="secondary">체크만 초기화</button>
+          </div>
+        </div>
+        </div>
+        <div id="bingoPaneBoard" class="bingoPane">
+          <div id="bingoViewInfo" class="bingoViewInfo"></div>
+          <div id="bingoBoards" class="bingoBoards"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+  <div class="footer">CORE BUILD 13 · 다인 후원 테스트 + 채팅 확인</div>
+</div>
+<script>
+const PROFILE_KEY='soop_content_profile_v1';
+const CURRENT_ROOM_KEY='soop_content_current_room_clean2';
+let detected={bjId:'',bjNickname:''};
+let selectedTheme='hero';
+let profile=load(PROFILE_KEY,{name:'',soopId:'',url:'',img:''});
+let room=null;
+let currentRoomCode=localStorage.getItem(CURRENT_ROOM_KEY)||'';
+let pollTimer=null;
+let memberSearchText='';
+let memberTeamValue='ALL';
+let memberPage=1;
+let uiInteractionUntil=0;
+let donationRulesDirty=false;
+const MEMBER_PAGE_SIZE=12;
+function load(k,d){try{const x=localStorage.getItem(k);return x?JSON.parse(x):d}catch{return d}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function initials(name){const c=document.createElement('canvas');c.width=c.height=160;const x=c.getContext('2d');x.fillStyle='#16374c';x.fillRect(0,0,160,160);x.fillStyle='#6fe2ff';x.font='bold 54px Arial';x.textAlign='center';x.textBaseline='middle';x.fillText((name||'?').slice(0,2),80,82);return c.toDataURL()}
+function renderProfile(){previewName.textContent=profile.name||'프로필 미등록';previewId.textContent=profile.soopId?`SOOP ID · ${profile.soopId}`:'SOOP ID를 등록해 주세요';previewImg.src=profile.img||initials(profile.name);profileName.value=profile.name||'';profileSoopId.value=profile.soopId||'';profileUrl.value=profile.url||''}
+function renderAuto(){if(detected.bjId){const matched=profile.soopId&&String(profile.soopId).toLowerCase()===String(detected.bjId).toLowerCase();autoBox.className='auto';autoBox.textContent=matched?`✅ 현재 방송 ${detected.bjNickname||detected.bjId} · 저장된 내 프로필과 자동 일치`:`📡 현재 방송 감지: ${detected.bjNickname||'방송주인'} / ID ${detected.bjId} · '현재 방송 정보 사용'을 누르면 프로필에 넣습니다.`}else{autoBox.className='auto warn';autoBox.textContent='일반 브라우저에서는 SOOP 방송주인 자동 인식이 없습니다. SOOP 확장 프로그램 안에서 실행하면 자동 확인됩니다.'}}
+function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+function themeLabel(t){return t==='battle'?'배틀':t==='fun'?'예능':'히어로'}
+function profileReady(){return !!(profile.name&&profile.soopId)}
+function setRoomCode(c){currentRoomCode=(c||'').toUpperCase();if(currentRoomCode)localStorage.setItem(CURRENT_ROOM_KEY,currentRoomCode);else localStorage.removeItem(CURRENT_ROOM_KEY)}
+function isMeId(id){return String(id||'').toLowerCase()===String(profile.soopId||'').toLowerCase()}
+function amHost(){return !!(room&&room.members&&room.members.some(m=>isMeId(m.soopId)&&m.role==='HOST'))}
+function safeAttr(s){return escapeHtml(String(s??'')).replace(/`/g,'&#96;')}
+function normalizedTeamName(team){
+  const t=String(team||'').trim();
+  return !t||t==='미배정'?'미배정':t;
+}
+function teamClass(team){
+  const t=normalizedTeamName(team);
+  if(t==='미배정')return 'unassigned';
+  const m=t.match(/^(\d+)\s*팀$/);
+  if(m){
+    const n=Number(m[1]);
+    if(n>=1&&n<=8)return 'team-'+n;
+  }
+  return 'team-other';
+}
+function teamBadgeHtml(team){
+  const t=normalizedTeamName(team);
+  return `<span class="teamBadge ${teamClass(t)}">${escapeHtml(t)}</span>`;
+}
+function teamNumber(team){
+  const m=normalizedTeamName(team).match(/^(\d+)\s*팀$/);
+  return m?Number(m[1]):999;
+}
+function teamOptions(selected){
+  const count=8;
+  let s=`<option value="미배정" ${normalizedTeamName(selected)==='미배정'?'selected':''}>미배정</option>`;
+  for(let n=1;n<=count;n++){
+    const t=`${n}팀`; s+=`<option value="${t}" ${normalizedTeamName(selected)===t?'selected':''}>${t}</option>`;
+  }
+  return s;
+}
+function contentLabel(v){
+  return ({bingo:'빙고',kill:'킬내기',pinball:'핀볼',race:'경마',ladder:'의리 사다리'})[v]||'미선택';
+}
+function renderContentSelection(){
+  if(!window.contentCards)return;
+  const selected=room?.content||'none';
+  contentCards.querySelectorAll('[data-content]').forEach(btn=>{
+    btn.classList.toggle('selected',btn.dataset.content===selected);
+    btn.disabled=!!room&&!amHost();
+  });
+  contentStatus.textContent=selected==='none'
+    ?(amHost()?'콘텐츠를 하나 선택해 주세요.':'방장이 콘텐츠를 선택하는 중입니다.')
+    :`현재 선택: ${contentLabel(selected)}${amHost()?' · 다른 콘텐츠를 누르면 변경됩니다.':''}`;
+  bingoSetup.classList.toggle('hidden',selected!=='bingo');
+  if(selected==='bingo'){
+    if(!isUiInteractionActive()){
+      bingoMode.value=room?.bingoMode||'team';
+      bingoSize.value=String(room?.bingoSize||5);
+    }
+    bingoMode.disabled=!amHost();bingoSize.disabled=!amHost();saveBingoSettings.classList.toggle('hidden',!amHost());
+    bingoReady.textContent=`현재 설정 · ${(room?.bingoMode||'team')==='team'?'팀 빙고':'개인 빙고'} · ${room?.bingoSize||5}×${room?.bingoSize||5}`;
+  }
+  renderBingoWorkspace();
+}
+
+
+
+
+let activeBingoTab='board';
+function setBingoTab(tab){
+  activeBingoTab=tab||'board';
+  document.querySelectorAll('.bingoTab').forEach(b=>b.classList.toggle('active',b.dataset.bingoTab===activeBingoTab));
+  bingoPaneBoard.classList.toggle('hidden',activeBingoTab!=='board');
+  bingoPaneMission.classList.toggle('hidden',activeBingoTab!=='mission');
+  bingoPaneRank.classList.toggle('hidden',activeBingoTab!=='rank');
+  bingoPaneSupport.classList.toggle('hidden',activeBingoTab!=='support');
+}
+document.querySelectorAll('.bingoTab').forEach(b=>b.addEventListener('click',()=>setBingoTab(b.dataset.bingoTab)));
+
+function getBingoBoardsObject(){return room?.bingoBoards||{}}
+function canControlBoard(key){
+  if(!room||!profileReady())return false;
+  const me=(room.members||[]).find(m=>isMeId(m.soopId));
+  if(!me||me.role==='VIEWER')return false;
+  if(me.role==='HOST')return true;
+  if((room.bingoMode||'team')==='individual')return key===`P:${String(profile.soopId).toLowerCase()}`;
+  return key===`T:${me.team||''}`;
+}
+
+function bingoLineCount(board,size){
+  const a=Array.from(board?.checked||[]).map(Boolean);
+  if(a.length<size*size)return 0;
+  let lines=0;
+  for(let r=0;r<size;r++){let ok=true;for(let c=0;c<size;c++)if(!a[r*size+c]){ok=false;break}if(ok)lines++}
+  for(let c=0;c<size;c++){let ok=true;for(let r=0;r<size;r++)if(!a[r*size+c]){ok=false;break}if(ok)lines++}
+  let d1=true,d2=true;
+  for(let i=0;i<size;i++){if(!a[i*size+i])d1=false;if(!a[i*size+(size-1-i)])d2=false}
+  if(d1)lines++;if(d2)lines++;
+  return lines;
+}
+function completedCellCount(board){return Array.from(board?.checked||[]).filter(Boolean).length}
+function boardMembersText(key,board){
+  if((room?.bingoMode||'team')==='individual')return board?.label||key;
+  const team=board?.team||String(key).replace(/^T:/,'');
+  return (room?.members||[]).filter(m=>m.role!=='VIEWER'&&m.team===team).map(m=>m.name).join(', ')||'참가자 없음';
+}
+function renderBingoDashboard(){
+  if(!room||room.content!=='bingo')return;
+  const size=Number(room.bingoSize||5);
+  const entries=Object.entries(getBingoBoardsObject()).map(([key,b])=>({
+    key,b,label:b.label||key,lines:bingoLineCount(b,size),done:completedCellCount(b),members:boardMembersText(key,b)
+  }));
+  entries.sort((x,y)=>y.lines-x.lines||y.done-x.done||String(x.label).localeCompare(String(y.label),'ko'));
+  bingoRanking.innerHTML=entries.length?entries.map((x,i)=>`<div class="rankRow">
+    <div class="rankNo">${i+1}</div>
+    <div class="rankMain"><b>${escapeHtml(x.label)}</b>${(room.bingoMode||'team')==='team'?`<small>${escapeHtml(x.members)}</small>`:''}</div>
+    <div class="rankScore"><em>${x.lines}빙고</em> · ${x.done}/${size*size}칸</div>
+  </div>`).join(''):'<div class="bingoEmpty">빙고판 생성 후 순위가 표시됩니다.</div>';
+
+  const members=[...(room.members||[])].sort((a,b)=>teamNumber(a.team)-teamNumber(b.team)||String(a.name).localeCompare(String(b.name),'ko'));
+  bingoParticipants.innerHTML=members.map(m=>{
+    let progress='관전자';
+    if(m.role!=='VIEWER'){
+      const key=(room.bingoMode||'team')==='individual'?`P:${String(m.soopId).toLowerCase()}`:`T:${m.team||''}`;
+      const b=getBingoBoardsObject()[key];
+      progress=b?`${bingoLineCount(b,size)}빙고 · ${completedCellCount(b)}/${size*size}칸`:'판 대기';
+    }
+    return `<div class="participantRow"><span class="teamBadge ${teamClass(m.team)}">${escapeHtml(m.team||'미배정')}</span>
+      <div><b>${escapeHtml(m.name)}${m.role==='HOST'?' 👑':''}</b><small>${m.role==='VIEWER'?'관전자':'참가자'} · ${escapeHtml(m.soopId)}</small></div>
+      <strong>${progress}</strong></div>`;
+  }).join('');
+}
+
+function donationEffectLabel(a){
+  return ({complete_cells:'미완료 칸 성공',reset_cells:'완료 칸 초기화',replace_cells:'미션 교체',complete_line:'한 줄 성공',reset_line:'한 줄 초기화',complete_all:'전체 칸 성공',reset_all:'전체 체크 초기화',reshuffle:'전체 미션 랜덤'})[a]||a;
+}
+function donationTargetLabel(t){
+  return ({self:'나 / 내 팀',random_player:'랜덤 개인',selected_player:'지정 개인',random_enemy_team:'랜덤 상대 팀',selected_team:'지정 팀',all:'전체'})[t]||t;
+}
+function donationPickLabel(p){return p==='select'?'지정':'랜덤'}
+function ruleRowHtml(rule={}){
+  const count=Number(rule.count||30),target=rule.target||'self',effect=rule.effect||'complete_cells',pick=rule.pick||'random',value=Number(rule.value||1);
+  return `<div class="donationRuleRow">
+    <input class="ruleCount" type="number" min="1" value="${count}" title="별풍선 개수">
+    <select class="ruleTarget">
+      ${[['self','나/내 팀'],['random_player','랜덤 개인'],['selected_player','지정 개인'],['random_enemy_team','랜덤 상대 팀'],['selected_team','지정 팀'],['all','전체']].map(([v,l])=>`<option value="${v}" ${target===v?'selected':''}>${l}</option>`).join('')}
+    </select>
+    <select class="ruleEffect">
+      ${[['complete_cells','미완료 칸 성공'],['reset_cells','완료 칸 초기화'],['replace_cells','미션 교체'],['complete_line','한 줄 성공'],['reset_line','한 줄 초기화'],['complete_all','전체 칸 성공'],['reset_all','전체 체크 초기화'],['reshuffle','전체 미션 랜덤']].map(([v,l])=>`<option value="${v}" ${effect===v?'selected':''}>${l}</option>`).join('')}
+    </select>
+    <select class="rulePick"><option value="random" ${pick==='random'?'selected':''}>랜덤</option><option value="select" ${pick==='select'?'selected':''}>지정</option></select>
+    <input class="ruleValue" type="number" min="1" max="100" value="${value}" title="적용 수">
+    <button type="button" data-remove-rule="1">삭제</button>
+  </div>`;
+}
+function renderDonationRules(force=false){
+  if(donationRulesDirty&&!force)return;
+  const rules=Array.isArray(room?.donationRules)&&room.donationRules.length?room.donationRules:[{count:30,target:'self',effect:'complete_cells',pick:'random',value:1}];
+  donationRules.innerHTML=rules.map(ruleRowHtml).join('');
+  donationRulesDirty=false;
+}
+
+
+function myRoomMember(){
+  return (room?.members||[]).find(m=>isMeId(m.soopId))||null;
+}
+function renderApiIdentity(){
+  const me=myRoomMember();
+  if(me){
+    const target=(room?.bingoMode||'team')==='individual'
+      ?`${me.name} 개인 빙고판`
+      :`${me.team||'미배정'} 공유 빙고판`;
+    myApiIdentityText.textContent=`${me.name} · ${target}`;
+  }else{
+    myApiIdentityText.textContent='방 참가 정보 없음';
+  }
+  hostDonationSimulator.classList.toggle('hidden',!amHost());
+  if(amHost()){
+    const current=simActor.value;
+    const options=(room?.members||[]).filter(m=>m.role!=='VIEWER').map(m=>{
+      const team=m.team||'미배정';
+      return `<option value="${safeAttr(m.soopId)}">${escapeHtml(m.name)} · ${escapeHtml(team)}${m.role==='HOST'?' · 방장':''}</option>`;
+    }).join('');
+    simActor.innerHTML=options;
+    if([...simActor.options].some(o=>o.value===current))simActor.value=current;
+  }
+}
+function effectSummaryFromResult(data,count){
+  const p=data?.room?.pendingDonation;
+  if(data?.pending&&p){
+    return `별풍선 ${count}개 효과 발동 · ${donationTargetLabel(p.target)} / ${donationEffectLabel(p.effect)} · 지정 선택 대기`;
+  }
+  const last=(data?.room?.donationLog||[]).slice(-1)[0];
+  if(last){
+    return `별풍선 ${count}개 효과 적용 · ${donationEffectLabel(last.ruleAction||'none')} · ${Number(last.applied||0)} 적용`;
+  }
+  return `별풍선 ${count}개 수신 · 적용 규칙 없음`;
+}
+async function sendSOOPChatAck(text){
+  if(!text)return false;
+  if(!soopExt||!soopExt.chat||typeof soopExt.chat.send!=='function'){
+    chatAckStatus.textContent='채팅 전송 API 없음';
+    chatAckStatus.className='ackBad';
+    return false;
+  }
+  try{
+    const r=soopExt.chat.send(text);
+    if(r&&typeof r.then==='function')await r;
+    chatAckStatus.textContent='✓ 효과 안내 채팅 전송';
+    chatAckStatus.className='ackOk';
+    return true;
+  }catch(e1){
+    try{
+      const r2=soopExt.chat.send({message:text});
+      if(r2&&typeof r2.then==='function')await r2;
+      chatAckStatus.textContent='✓ 효과 안내 채팅 전송';
+      chatAckStatus.className='ackOk';
+      return true;
+    }catch(e2){
+      console.warn('SOOP chat.send failed',e1,e2);
+      chatAckStatus.textContent='채팅 전송 실패 · 로그는 저장됨';
+      chatAckStatus.className='ackBad';
+      return false;
+    }
+  }
+}
+
+function renderDonationPanel(){
+  if(!room)return;
+  renderApiIdentity();
+  donationHostSettings.classList.toggle('hidden',!amHost());
+  if(amHost()&&!isUiInteractionActive())renderDonationRules(false);
+  const rules=Array.isArray(room.donationRules)&&room.donationRules.length?room.donationRules:[{count:30,target:'self',effect:'complete_cells',pick:'random',value:1}];
+  donationRuleText.textContent='현재 규칙: '+rules.map(r=>`${r.count}개 → ${donationTargetLabel(r.target)} / ${donationEffectLabel(r.effect)} / ${donationPickLabel(r.pick)}${['complete_cells','reset_cells','replace_cells'].includes(r.effect)?' '+r.value+'개':''}`).join(' / ');
+  const logs=Array.from(room.donationLog||[]).slice().reverse();
+  donationLog.innerHTML=logs.length?logs.map(x=>{
+    const t=x.time?new Date(Number(x.time)).toLocaleTimeString():'';
+    const who=x.donor||'후원자';
+    const target=x.actorName||x.actorId||'참가자';
+    return `<div>${escapeHtml(t)} · ${escapeHtml(who)} ${Number(x.count||0)}개 → ${escapeHtml(target)} · ${escapeHtml(donationEffectLabel(x.ruleAction||'none'))} · ${Number(x.applied||0)} 적용</div>`;
+  }).join(''):'<div>아직 후원 이벤트가 없습니다.</div>';
+}
+
+
+function pendingMine(){
+  const p=room?.pendingDonation;
+  return !!p && (String(p.actorId||'').toLowerCase()===String(profile.soopId||'').toLowerCase() || amHost());
+}
+function pendingCellBoardKey(){
+  const p=room?.pendingDonation;
+  return pendingMine()&&p?.stage==='cell'?String(p.boardKey||''):'';
+}
+function renderPendingEffect(){
+  const p=room?.pendingDonation;
+  if(!p||!pendingMine()){pendingEffect.classList.add('hidden');pendingEffect.innerHTML='';return}
+  pendingEffect.classList.remove('hidden');
+  let body='';
+  if(p.stage==='target'){
+    if(p.targetKind==='team'){
+      const teams=[...new Set((room.members||[]).filter(m=>m.role!=='VIEWER'&&/^[1-8]팀$/.test(m.team)).map(m=>m.team))];
+      body=`<div class="pendingChoices">${teams.map(t=>`<button data-pending-team="${safeAttr(t)}">${escapeHtml(t)}</button>`).join('')}</div>`;
+    }else{
+      const players=(room.members||[]).filter(m=>m.role!=='VIEWER'&&!isMeId(m.soopId));
+      body=`<div class="pendingChoices">${players.map(m=>`<button data-pending-player="${safeAttr(m.soopId)}">${escapeHtml(m.name)}</button>`).join('')}</div>`;
+    }
+  }else if(p.stage==='cell'){
+    body=`<div style="margin-top:7px">대상 빙고판에서 <b>${Number(p.remaining||1)}칸</b>을 클릭하세요. 주황 테두리 칸을 선택하면 바로 적용됩니다.</div>`;
+  }else if(p.stage==='line'){
+    const size=Number(room.bingoSize||5);
+    body=`<div class="lineChoices">${Array.from({length:size},(_,i)=>`<button data-line-type="row" data-line-index="${i}">${i+1}행</button>`).join('')}${Array.from({length:size},(_,i)=>`<button data-line-type="col" data-line-index="${i}">${i+1}열</button>`).join('')}<button data-line-type="diag1" data-line-index="0">↘ 대각선</button><button data-line-type="diag2" data-line-index="0">↙ 대각선</button></div>`;
+  }
+  pendingEffect.innerHTML=`<div class="pendingHead"><span>🎁 지정 효과 선택 대기 · ${donationTargetLabel(p.target)} / ${donationEffectLabel(p.effect)}</span><button class="miniBtn" data-cancel-pending="1">취소</button></div>${body}`;
+}
+
+function renderBingoWorkspace(){
+  const active=!!room&&room.content==='bingo';
+  bingoPlay.classList.toggle('hidden',!active);
+  if(!active)return;
+  bingoMissionEditor.classList.toggle('hidden',!amHost());
+  setBingoTab(activeBingoTab);
+  if(amHost()&&!bingoMissions.value.trim()&&Array.isArray(room.bingoMissions)&&room.bingoMissions.length){
+    bingoMissions.value=room.bingoMissions.join('\n');
+  }
+  renderBingoDashboard();
+  renderPendingEffect();
+  renderDonationPanel();
+  const boards=getBingoBoardsObject();
+  const entries=Object.entries(boards);
+  if(!entries.length){
+    bingoBoards.innerHTML='<div class="bingoEmpty">'+(amHost()?'미션을 입력한 뒤 「빙고판 생성」을 눌러주세요.':'방장이 아직 빙고판을 생성하지 않았습니다.')+'</div>';
+    return;
+  }
+  const size=Number(room.bingoSize||5);
+  const mode=room.bingoMode||'team';
+  const me=(room.members||[]).find(m=>isMeId(m.soopId));
+  if(mode==='individual'){
+    bingoViewInfo.innerHTML=amHost()
+      ?'개인 빙고 모드 · <b>방장은 모든 참가자의 빙고판을 볼 수 있고 조작할 수 있습니다.</b>'
+      :'개인 빙고 모드 · <b>내 빙고판은 체크 가능</b>, 다른 참가자의 빙고판은 보기 전용입니다.';
+  }else{
+    bingoViewInfo.innerHTML=`팀 빙고 모드 · 내 팀 <b>${escapeHtml(me?.team||'미배정')}</b> 빙고판을 팀원끼리 공유합니다.`;
+  }
+  entries.sort((a,b)=>String(a[1].label||a[0]).localeCompare(String(b[1].label||b[0]),'ko'));
+  bingoBoards.innerHTML=entries.map(([key,b])=>{
+    const cells=Array.from(b.cells||[]);
+    const checked=Array.from(b.checked||[]);
+    const pendingPick=pendingCellBoardKey()===key;
+    const allow=canControlBoard(key)||pendingPick;
+    const mine=mode==='individual'&&key===`P:${String(profile.soopId||'').toLowerCase()}`;
+    const ownerBadge=mode==='individual'
+      ?`<span class="ownerBadge">${mine?'내 빙고판':'소유자 · '+escapeHtml(b.label||key)}</span>`
+      :`<span class="ownerBadge">${escapeHtml(b.team||b.label||key)}</span>`;
+    return `<section class="bingoBoardWrap ${mine?'mine':''}">
+      <div class="bingoBoardHead"><b>${escapeHtml(b.label||key)} ${ownerBadge}</b><small>${allow?'체크 가능':'보기 전용'} · ${size}×${size}</small></div>
+      <div class="bingoGrid" style="grid-template-columns:repeat(${size},minmax(0,1fr))">
+        ${cells.map((mission,i)=>`<button class="bingoCell ${checked[i]?'done':''} ${pendingPick?'pendingPick':''}" style="min-height:${size>=8?46:size>=6?58:72}px;font-size:${size>=8?9:size>=6?10:12}px" data-board-key="${safeAttr(key)}" data-cell-index="${i}" ${allow?'':'disabled'}>${escapeHtml(mission)}</button>`).join('')}
+      </div>
+    </section>`;
+  }).join('');
+}
+
+function rebuildTeamFilter(){
+  const current=memberTeamValue;
+  const count=8;
+  const teams=['미배정',...Array.from({length:count},(_,i)=>`${i+1}팀`)];
+  memberTeamFilter.innerHTML='<option value="ALL">전체 팀</option>'+teams.map(t=>{
+    const mark=t==='1팀'?'🔴 ':t==='2팀'?'🔵 ':t==='3팀'?'🟡 ':t==='4팀'?'🟣 ':t==='5팀'?'🟢 ':t==='6팀'?'🟠 ':t==='7팀'?'🔷 ':t==='8팀'?'🌸 ':t==='미배정'?'⚪ ':'🟢 ';
+    return `<option value="${safeAttr(t)}">${mark}${escapeHtml(t)}</option>`;
+  }).join('');
+  if([...memberTeamFilter.options].some(o=>o.value===current))memberTeamFilter.value=current;
+  else{memberTeamValue='ALL';memberTeamFilter.value='ALL'}
+}
+function renderMembers(){
+  if(!room)return;
+  const host=amHost();
+  let list=[...(room.members||[])];
+  const q=memberSearchText.trim().toLowerCase();
+  if(q)list=list.filter(m=>String(m.name||'').toLowerCase().includes(q)||String(m.soopId||'').toLowerCase().includes(q));
+  if(memberTeamValue!=='ALL')list=list.filter(m=>(m.team||'미배정')===memberTeamValue);
+
+  list.sort((a,b)=>{
+    const ta=teamNumber(a.team),tb=teamNumber(b.team);
+    if(ta!==tb)return ta-tb;
+    const ua=normalizedTeamName(a.team)==='미배정',ub=normalizedTeamName(b.team)==='미배정';
+    if(ua!==ub)return ua?1:-1;
+    return String(a.name||'').localeCompare(String(b.name||''),'ko');
+  });
+
+  const totalPages=Math.max(1,Math.ceil(list.length/MEMBER_PAGE_SIZE));
+  if(memberPage>totalPages)memberPage=totalPages;
+  const start=(memberPage-1)*MEMBER_PAGE_SIZE;
+  const page=list.slice(start,start+MEMBER_PAGE_SIZE);
+
+  if(!page.length){
+    members.innerHTML='<div class="emptyMembers">조건에 맞는 참가자가 없습니다.</div>';
+  }else{
+    const groups=[];
+    page.forEach(m=>{
+      const key=normalizedTeamName(m.team);
+      let g=groups.find(x=>x.key===key);
+      if(!g){g={key,items:[]};groups.push(g)}
+      g.items.push(m);
+    });
+    members.innerHTML=groups.map(g=>{
+      const headerClass=teamClass(g.key);
+      const title=escapeHtml(g.key);
+      const rows=g.items.map(m=>{
+        const self=isMeId(m.soopId);
+        const hostMember=m.role==='HOST';
+        const controls=host?`
+          <select class="teamSelect" data-team-id="${safeAttr(m.soopId)}">${teamOptions(m.team)}</select>
+          ${hostMember?'<span class="roleChip">방장</span>':`<select class="roleSelect" data-role-id="${safeAttr(m.soopId)}"><option value="PLAYER" ${m.role==='PLAYER'?'selected':''}>참가자</option><option value="VIEWER" ${m.role==='VIEWER'?'selected':''}>관전자</option></select>`}
+          <button class="miniBtn" data-action="apply-member" data-id="${safeAttr(m.soopId)}">적용</button>
+          ${hostMember?'':`<button class="miniBtn dangerMini" data-action="kick-member" data-id="${safeAttr(m.soopId)}">내보내기</button>`}
+        `:`
+          <span class="teamChip">${escapeHtml(m.team||'미배정')}</span>
+          <span class="roleChip">${m.role==='HOST'?'방장':(m.role==='VIEWER'?'관전자':'참가자')}</span>
+        `;
+        return `<div class="member ${teamClass(m.team)}">
+          <img class="avatar small" src="${m.img||initials(m.name)}">
+          <div class="memberMain"><b>${escapeHtml(m.name||'이름 없음')} ${teamBadgeHtml(m.team)} ${hostMember?'<span class="me">방장</span>':''} ${self?'<span class="me">나</span>':''}</b><small>${escapeHtml(m.soopId||'SOOP ID 미등록')}</small></div>
+          <div class="memberRight">${controls}</div>
+        </div>`;
+      }).join('');
+      return `<section class="teamSection"><div class="teamSectionTitle ${headerClass}"><span>${title}</span><span>${g.items.length}명</span></div>${rows}</section>`;
+    }).join('');
+  }
+  memberPager.innerHTML=`<button class="miniBtn" data-page="prev" ${memberPage<=1?'disabled':''}>◀</button><span>${memberPage} / ${totalPages} · 검색결과 ${list.length}명</span><button class="miniBtn" data-page="next" ${memberPage>=totalPages?'disabled':''}>▶</button>`;
+}
+function renderRoom(){
+  const inRoom=!!room;
+  activeRoomCard.classList.toggle('hidden',!inRoom);
+  roomLobbyCard.classList.toggle('hidden',inRoom);
+  if(!inRoom)return;
+  activeCode.textContent=room.code;
+  activeRoomName.textContent=`방 · ${room.name}`;
+  activeTheme.textContent=`테마 · ${themeLabel(room.theme)}`;
+  activeCapacity.textContent=`인원 · ${room.members.length}/${room.max}`;
+  hostTools.classList.toggle('hidden',!amHost());
+  if(amHost()){
+    hostRoomName.value=room.name||'';
+    hostRoomMax.value=room.max||8;
+    
+  }
+  rebuildTeamFilter();
+  renderMembers();
+  renderContentSelection();
+}
+const API_BASE='https://soop-content-maker-server.onrender.com';
+async function api(path,params={},method='POST'){
+  const opt={method,cache:'no-store'};
+  let url=API_BASE+path;
+  if(method==='GET'){const q=new URLSearchParams(params);if([...q].length)url+='?'+q.toString()}
+  else{opt.headers={'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'};opt.body=new URLSearchParams(params).toString()}
+  const res=await fetch(url,opt);let data=null;try{data=await res.json()}catch{throw new Error('방 서버 응답을 읽을 수 없습니다.')}
+  if(!res.ok||!data.ok)throw new Error(data&&data.message?data.message:'방 서버 오류가 발생했습니다.');return data;
+}
+let statusResetTimer=null;
+
+function holdUiInteraction(ms=5000){
+  uiInteractionUntil=Math.max(uiInteractionUntil,Date.now()+ms);
+}
+function isUiInteractionActive(){
+  const a=document.activeElement;
+  if(Date.now()<uiInteractionUntil)return true;
+  if(!a)return false;
+  return !!a.matches?.('select,input,textarea');
+}
+document.addEventListener('pointerdown',e=>{
+  if(e.target.closest('#bingoSetup select,#bingoPlay select,#bingoPlay input,#bingoPlay textarea,#donationRules select,#donationRules input,#hostTools select,#hostTools input,.managerBar select,.managerBar input')){
+    holdUiInteraction(8000);
+  }
+},true);
+document.addEventListener('focusin',e=>{
+  if(e.target.matches('#bingoSetup select,#bingoPlay select,#bingoPlay input,#bingoPlay textarea,#donationRules select,#donationRules input,#hostTools select,#hostTools input,.managerBar select,.managerBar input')){
+    holdUiInteraction(60000);
+  }
+});
+document.addEventListener('change',e=>{
+  if(e.target.matches('#bingoSetup select,#bingoPlay select,#donationRules select,#hostTools select,.managerBar select')){
+    holdUiInteraction(1500);
+  }
+});
+document.addEventListener('focusout',e=>{
+  if(e.target.matches('select,input,textarea'))uiInteractionUntil=Date.now()+1200;
+});
+
+function setActionStatus(state,text){
+  if(statusResetTimer){clearTimeout(statusResetTimer);statusResetTimer=null}
+  actionStatus.className=`actionStatus ${state}`;
+  actionStatusText.textContent=text||'';
+  actionStatus.querySelector('.actionDot').textContent=state==='success'?'✓':state==='error'?'!':state==='loading'?'◌':'○';
+  if(window.bingoLocalStatus){
+    bingoLocalStatus.className=`bingoLocalStatus ${state}`;
+    bingoLocalStatusText.textContent=text||'빙고 준비됨';
+    bingoLocalStatus.querySelector('.localDot').textContent=state==='success'?'✓':state==='error'?'!':state==='loading'?'◌':'○';
+  }
+  if(state==='success'||state==='error'){
+    statusResetTimer=setTimeout(()=>{
+      actionStatus.className='actionStatus idle';
+      actionStatusText.textContent='준비됨';
+      actionStatus.querySelector('.actionDot').textContent='○';
+      if(window.bingoLocalStatus){
+        bingoLocalStatus.className='bingoLocalStatus';
+        bingoLocalStatusText.textContent='빙고 준비됨';
+        bingoLocalStatus.querySelector('.localDot').textContent='○';
+      }
+    },3500);
+  }
+}
+function markButton(btn,state,normalText){
+  if(!btn)return;
+  btn.classList.remove('busy','actionSuccess','actionError');
+  if(state==='loading'){
+    btn.disabled=true;btn.classList.add('busy');btn.dataset.normalText=normalText||btn.textContent;btn.textContent='처리 중...';
+  }else if(state==='success'){
+    btn.disabled=false;btn.classList.add('actionSuccess');btn.textContent='✓ 완료';
+    setTimeout(()=>{if(btn.isConnected){btn.classList.remove('actionSuccess');btn.textContent=btn.dataset.normalText||normalText||'완료'}},1300);
+  }else if(state==='error'){
+    btn.disabled=false;btn.classList.add('actionError');btn.textContent='! 오류';
+    setTimeout(()=>{if(btn.isConnected){btn.classList.remove('actionError');btn.textContent=btn.dataset.normalText||normalText||'다시 시도'}},1600);
+  }else{
+    btn.disabled=false;btn.textContent=btn.dataset.normalText||normalText||btn.textContent;
+  }
+}
+
+async function saveProfileToServer(){
+  if(!profileReady())return false;
+  try{
+    await api('/api/profile/save',{name:profile.name,soopId:profile.soopId,url:profile.url||'',img:profile.img||''});
+    return true;
+  }catch(e){
+    console.warn('server profile save failed',e);
+    return false;
+  }
+}
+async function restoreProfileFromServer(id){
+  const key=String(id||'').trim();
+  if(!key)return false;
+  try{
+    const data=await api('/api/profile/get',{id:key},'GET');
+    if(!data.found||!data.profile)return false;
+    const p=data.profile;
+    profile={name:p.name||'',soopId:p.soopId||key,url:p.url||'',img:p.img||''};
+    save(PROFILE_KEY,profile);
+    renderProfile();renderAuto();
+    return true;
+  }catch(e){
+    console.warn('server profile restore failed',e);
+    return false;
+  }
+}
+async function refreshRoom(showError=false){
+  if(!currentRoomCode)return;
+  try{
+    const data=await api('/api/room/get',{code:currentRoomCode},'GET');
+    const nextRoom=data.room;
+    if(profileReady()&&!nextRoom.members.some(m=>isMeId(m.soopId))){
+      room=null;setRoomCode('');renderRoom();return;
+    }
+    const wasHost=amHost();
+    const before=(room?.members||[]).map(m=>String(m.soopId).toLowerCase()).sort().join('|');
+    const after=(nextRoom.members||[]).map(m=>String(m.soopId).toLowerCase()).sort().join('|');
+    const rosterChanged=before!==after;
+    room=nextRoom;
+
+    // 핵심: 방장 관리 화면은 참가자 구성이 그대로일 때 1초마다 다시 그리지 않는다.
+    // 따라서 팀 입력/역할 선택이 클릭 직후 취소되지 않는다.
+    if(wasHost&&!rosterChanged){
+      activeCapacity.textContent=`인원 · ${room.members.length}/${room.max}`;
+      syncChip.textContent='실시간 동기화 정상';
+      if(!isUiInteractionActive())renderContentSelection();
+      return;
+    }
+    renderRoom();
+  }catch(e){
+    room=null;setRoomCode('');renderRoom();
+    if(showError)alert(e.message);
+  }
+}
+function startPolling(){if(pollTimer)clearInterval(pollTimer);pollTimer=setInterval(()=>{if(currentRoomCode)refreshRoom(false)},1000)}
+profileImage.addEventListener('change',()=>{const f=profileImage.files[0];if(!f)return;if(f.size>2.5*1024*1024){alert('사진은 2.5MB 이하로 넣어 주세요.');profileImage.value='';return}const r=new FileReader();r.onload=()=>{profile.img=r.result;renderProfile()};r.readAsDataURL(f)});
+saveProfile.addEventListener('click',async()=>{
+  profile.name=profileName.value.trim();
+  profile.soopId=profileSoopId.value.trim();
+  profile.url=profileUrl.value.trim();
+  if(!profile.name||!profile.soopId){alert('스트리머 이름과 SOOP ID는 꼭 입력해 주세요.');return}
+  save(PROFILE_KEY,profile);
+  renderProfile();renderAuto();
+  const serverSaved=await saveProfileToServer();
+  alert(serverSaved?'프로필을 저장했습니다.\n새 테스트 주소로 바뀌어도 SOOP ID로 다시 불러옵니다.':'프로필은 이 브라우저에 저장됐지만 서버 저장에 실패했습니다.');
+});
+useDetected.addEventListener('click',()=>{if(!detected.bjId){alert('현재 SOOP 방송 정보를 아직 감지하지 못했습니다. SOOP 확장 프로그램 안에서 실행해 주세요.');return}profileName.value=detected.bjNickname||profileName.value;profileSoopId.value=detected.bjId});
+document.querySelectorAll('.theme').forEach(b=>b.addEventListener('click',()=>{selectedTheme=b.dataset.theme;document.querySelectorAll('.theme').forEach(x=>x.classList.toggle('active',x===b))}));
+createRoom.addEventListener('click',async()=>{if(!profileReady()){alert('먼저 왼쪽에서 내 프로필을 저장해 주세요.');return}createRoom.disabled=true;try{const max=Math.max(2,Math.min(100,Number(maxPlayers.value)||8));const data=await api('/api/room/create',{name:roomName.value.trim()||'콘텐츠 방',theme:selectedTheme,max,password:roomPassword.value,nameHost:profile.name,idHost:profile.soopId,imgHost:profile.img||''});room=data.room;setRoomCode(room.code);renderRoom();alert(`방을 만들었습니다.\n방 코드: ${room.code}`)}catch(e){alert('방 만들기 실패: '+e.message)}finally{createRoom.disabled=false}});
+joinRoom.addEventListener('click',async()=>{if(!profileReady()){alert('먼저 왼쪽에서 내 프로필을 저장해 주세요.');return}const c=joinCode.value.trim().toUpperCase();if(!c){alert('방 코드를 입력해 주세요.');return}joinRoom.disabled=true;try{const data=await api('/api/room/join',{code:c,password:joinPassword.value,name:profile.name,id:profile.soopId,img:profile.img||''});room=data.room;setRoomCode(room.code);renderRoom();alert(data.reconnected?'기존 자리로 재접속했습니다.':'방 참가 완료!')}catch(e){alert('방 참가 실패: '+e.message)}finally{joinRoom.disabled=false}});
+
+memberSearch.addEventListener('input',()=>{memberSearchText=memberSearch.value;memberPage=1;renderMembers()});
+memberTeamFilter.addEventListener('change',()=>{memberTeamValue=memberTeamFilter.value;memberPage=1;renderMembers()});
+memberPager.addEventListener('click',(e)=>{
+  const b=e.target.closest('[data-page]');if(!b)return;
+  if(b.dataset.page==='prev')memberPage=Math.max(1,memberPage-1);else memberPage++;
+  renderMembers();
+});
+copyRoomCode.addEventListener('click',async()=>{
+  if(!room)return;
+  try{await navigator.clipboard.writeText(room.code);copyRoomCode.textContent='복사 완료';setTimeout(()=>copyRoomCode.textContent='방 코드 복사',1200)}
+  catch{alert('방 코드: '+room.code)}
+});
+saveRoomSettings.addEventListener('click',async()=>{
+  if(!room||!amHost())return;
+  saveRoomSettings.disabled=true;
+  try{
+    const data=await api('/api/room/settings',{code:room.code,hostId:profile.soopId,name:hostRoomName.value.trim(),max:hostRoomMax.value,teamCount:8});
+    room=data.room;renderRoom();
+  }catch(e){alert('방 설정 변경 실패: '+e.message)}
+  finally{saveRoomSettings.disabled=false}
+});
+contentCards.addEventListener('click',async(e)=>{
+  const btn=e.target.closest('[data-content]');
+  if(!btn||!room||!amHost())return;
+  const label=contentLabel(btn.dataset.content);
+  setActionStatus('loading',`${label} 선택 중`);
+  markButton(btn,'loading',label);
+  try{
+    const data=await api('/api/room/content',{code:room.code,hostId:profile.soopId,content:btn.dataset.content});
+    uiInteractionUntil=0;room=data.room;renderContentSelection();
+    setActionStatus('success',`${label} 선택 완료`);
+  }catch(err){
+    setActionStatus('error',`${label} 선택 실패 · ${err.message}`);
+    alert('콘텐츠 선택 실패: '+err.message);
+  }finally{
+    btn.disabled=false;
+    btn.textContent=btn.dataset.normalText||btn.textContent;
+  }
+});
+saveBingoSettings.addEventListener('click',async()=>{
+  if(!room||!amHost()||room.content!=='bingo')return;
+  setActionStatus('loading','빙고 설정 저장 중');
+  markButton(saveBingoSettings,'loading','빙고 설정 저장');
+  try{
+    const data=await api('/api/room/bingo/settings',{code:room.code,hostId:profile.soopId,mode:bingoMode.value,size:bingoSize.value});
+    uiInteractionUntil=0;room=data.room;renderContentSelection();
+    setActionStatus('success','빙고 설정 저장 완료');
+    markButton(saveBingoSettings,'success','빙고 설정 저장');
+  }catch(err){
+    setActionStatus('error','빙고 설정 저장 실패 · '+err.message);
+    markButton(saveBingoSettings,'error','빙고 설정 저장');
+    alert('빙고 설정 저장 실패: '+err.message);
+  }
+});
+
+
+addDonationRule.addEventListener('click',()=>{
+  donationRulesDirty=true;
+  holdUiInteraction(60000);
+  donationRules.insertAdjacentHTML('beforeend',ruleRowHtml({count:100,target:'self',effect:'complete_cells',pick:'random',value:1}));
+  setActionStatus('success','후원 규칙 1개 추가됨 · 저장 전');
+});
+donationRules.addEventListener('click',e=>{
+  const b=e.target.closest('[data-remove-rule]');
+  if(b){
+    donationRulesDirty=true;
+    holdUiInteraction(60000);
+    b.closest('.donationRuleRow')?.remove();
+  }
+});
+donationRules.addEventListener('input',e=>{
+  if(e.target.matches('input,select')){donationRulesDirty=true;holdUiInteraction(60000)}
+});
+donationRules.addEventListener('change',e=>{
+  if(e.target.matches('input,select')){donationRulesDirty=true;holdUiInteraction(60000)}
+});
+
+pendingEffect.addEventListener('click',async(e)=>{
+  if(!room||!pendingMine())return;
+  const team=e.target.closest('[data-pending-team]');
+  const player=e.target.closest('[data-pending-player]');
+  const line=e.target.closest('[data-line-type]');
+  const cancel=e.target.closest('[data-cancel-pending]');
+  try{
+    let data=null;
+    if(team){
+      setActionStatus('loading',`${team.dataset.pendingTeam} 대상 선택 중`);
+      data=await api('/api/room/donation/select-target',{code:room.code,actorId:profile.soopId,team:team.dataset.pendingTeam});
+    }else if(player){
+      setActionStatus('loading','개인 대상 선택 중');
+      data=await api('/api/room/donation/select-target',{code:room.code,actorId:profile.soopId,targetId:player.dataset.pendingPlayer});
+    }else if(line){
+      setActionStatus('loading','지정 한 줄 적용 중');
+      data=await api('/api/room/donation/select-line',{code:room.code,actorId:profile.soopId,lineType:line.dataset.lineType,lineIndex:line.dataset.lineIndex});
+    }else if(cancel){
+      data=await api('/api/room/donation/cancel-pending',{code:room.code,actorId:profile.soopId});
+    }
+    if(data){
+      room=data.room;renderBingoWorkspace();
+      setActionStatus('success',data.pending?'다음 대상을 선택하세요':'지정 효과 적용 완료');
+      if(!data.pending)await sendSOOPChatAck('[빙고] 지정 후원 효과 적용 완료');
+    }
+  }catch(err){setActionStatus('error','지정 효과 처리 실패 · '+err.message);alert(err.message)}
+});
+
+saveDonationRules.addEventListener('click',async()=>{
+  if(!room||!amHost())return;
+  const rules=[...donationRules.querySelectorAll('.donationRuleRow')].map(row=>({
+    count:Number(row.querySelector('.ruleCount').value||0),
+    target:row.querySelector('.ruleTarget').value,
+    effect:row.querySelector('.ruleEffect').value,
+    pick:row.querySelector('.rulePick').value,
+    value:Number(row.querySelector('.ruleValue').value||1)
+  })).filter(r=>r.count>0);
+  setActionStatus('loading','후원 규칙 저장 중');
+  markButton(saveDonationRules,'loading','후원 규칙 저장');
+  try{
+    const data=await api('/api/room/donation/rules',{code:room.code,hostId:profile.soopId,rules:JSON.stringify(rules)});
+    donationRulesDirty=false;
+    uiInteractionUntil=0;
+    room=data.room;
+    renderDonationRules(true);
+    renderDonationPanel();
+    setActionStatus('success','후원 규칙 저장 완료');
+    markButton(saveDonationRules,'success','후원 규칙 저장');
+  }catch(err){
+    setActionStatus('error','후원 규칙 저장 실패 · '+err.message);
+    markButton(saveDonationRules,'error','후원 규칙 저장');
+    alert('후원 규칙 저장 실패: '+err.message);
+  }
+});
+async function applyDonationEvent(count,donor='SOOP 후원자',action='BALLOON_GIFTED',actorIdOverride=''){
+  if(!room||room.content!=='bingo'||!profileReady())return;
+  const manual=action==='BALLOON_GIFTED_TEST';
+  if(manual){setActionStatus('loading',`별풍선 ${count}개 테스트 중`);markButton(testDonation,'loading','별풍선 수동 테스트')}
+  try{
+    const actorId=actorIdOverride||profile.soopId;
+    const data=await api('/api/room/donation/apply',{code:room.code,actorId,count:String(count),donor,action});
+    room=data.room;renderBingoWorkspace();
+    if(action==='BALLOON_GIFTED'){
+      const msg='[빙고] '+effectSummaryFromResult(data,count);
+      await sendSOOPChatAck(msg);
+    }
+    if(manual){
+      if(data.pending){
+        setActionStatus('success','후원 테스트 발동 · 지정 대상을 선택하세요');
+        markButton(testDonation,'success','별풍선 수동 테스트');
+      }else{
+        setActionStatus('success',`후원 테스트 완료 · ${Number(data.applied||0)} 적용`);
+        markButton(testDonation,'success','별풍선 수동 테스트');
+      }
+    }
+  }catch(err){
+    console.warn('donation apply failed',err);
+    if(manual){
+      setActionStatus('error','후원 테스트 실패 · '+err.message);
+      markButton(testDonation,'error','별풍선 수동 테스트');
+      alert('별풍선 테스트 실패: '+err.message);
+    }
+  }
+}
+
+runSimDonation.addEventListener('click',async()=>{
+  if(!room||!amHost())return;
+  const actorId=simActor.value;
+  const member=(room.members||[]).find(m=>String(m.soopId).toLowerCase()===String(actorId).toLowerCase());
+  const count=Math.max(1,Number(simCount.value||1));
+  if(!member){alert('테스트할 참가자를 선택해 주세요.');return}
+  if(Object.keys(room.bingoBoards||{}).length===0){alert('먼저 빙고판을 생성해 주세요.');return}
+  setActionStatus('loading',`${member.name} 후원 시뮬레이션 중`);
+  markButton(runSimDonation,'loading','선택 참가자로 테스트');
+  try{
+    await applyDonationEvent(count,`방장 시뮬레이터(${member.name})`,'HOST_SIMULATION',actorId);
+    setActionStatus('success',`${member.name} 기준 후원 테스트 완료`);
+    markButton(runSimDonation,'success','선택 참가자로 테스트');
+  }catch(err){
+    setActionStatus('error','참가자 후원 테스트 실패 · '+err.message);
+    markButton(runSimDonation,'error','선택 참가자로 테스트');
+  }
+});
+
+testDonation.addEventListener('click',async()=>{
+  const count=Math.max(1,Number(donationTestCount.value||1));
+  if(!room||Object.keys(room.bingoBoards||{}).length===0){alert('먼저 빙고판을 생성해 주세요.');return}
+  await applyDonationEvent(count,'수동 테스트','BALLOON_GIFTED_TEST');
+  setBingoTab('board');
+});
+
+fillSampleMissions.addEventListener('click',()=>{
+  const count=Number(bingoSize.value||room?.bingoSize||5)**2;
+  const samples=[
+    '게임 1승 하기','킬 3회 하기','어시스트 5회 하기','궁극기 2회 사용','연속 처치 3 달성',
+    '한 판 무사망','최종 일격 3회','오브젝트 기여 1분','회복 3,000 달성','피해 5,000 달성',
+    '첫 교전 승리','적 궁극기 끊기','환경 처치 1회','헤드샷 처치 1회','한타에서 2킬 이상',
+    '팀원 살리기','궁극기로 처치','역전 승리','거점 점령 성공','죽지 않고 2킬',
+    '상대 핵심 영웅 처치','한 판 10킬','연속 2승','지원 영웅 처치 2회','탱커 처치 2회',
+    '딜러 처치 2회','마지막 한타 승리','오버타임 승리','개인 미션 성공','팀 미션 성공',
+    '보너스 미션 A','보너스 미션 B','보너스 미션 C','보너스 미션 D','보너스 미션 E'
+  ];
+  while(samples.length<count)samples.push(`추가 미션 ${samples.length+1}`);
+  bingoMissions.value=samples.slice(0,count).join('\n');
+});
+generateBingo.addEventListener('click',async()=>{
+  if(!room||!amHost()||room.content!=='bingo')return;
+  const lines=bingoMissions.value.replace(/\r/g,'').split('\n').map(x=>x.trim()).filter(Boolean);
+  const need=Number(room.bingoSize||5)**2;
+  if(lines.length<need){
+    setActionStatus('error',`미션 부족 · 현재 ${lines.length}개 / 필요 ${need}개`);
+    alert(`현재 ${lines.length}개입니다. ${room.bingoSize}×${room.bingoSize} 빙고는 최소 ${need}개의 미션이 필요합니다.`);
+    return;
+  }
+  setActionStatus('loading',`빙고판 생성 중 · ${need}칸`);
+  markButton(generateBingo,'loading','빙고판 생성');
+  try{
+    const data=await api('/api/room/bingo/generate',{code:room.code,hostId:profile.soopId,missions:lines.join('\n')});
+    uiInteractionUntil=0;room=data.room;renderContentSelection();setBingoTab('board');
+    setActionStatus('success','빙고판 생성 완료');
+    markButton(generateBingo,'success','빙고판 생성');
+  }catch(err){
+    setActionStatus('error','빙고판 생성 실패 · '+err.message);
+    markButton(generateBingo,'error','빙고판 생성');
+    alert('빙고판 생성 실패: '+err.message);
+  }
+});
+
+reshuffleBingo.addEventListener('click',async()=>{
+  if(!room||!amHost()||room.content!=='bingo')return;
+  setActionStatus('loading','미션 다시 섞는 중');
+  markButton(reshuffleBingo,'loading','미션 다시 섞기');
+  try{
+    const data=await api('/api/room/bingo/reshuffle',{code:room.code,hostId:profile.soopId});
+    room=data.room;renderBingoWorkspace();setBingoTab('board');
+    setActionStatus('success','미션 다시 섞기 완료');
+    markButton(reshuffleBingo,'success','미션 다시 섞기');
+  }catch(err){
+    setActionStatus('error','다시 섞기 실패 · '+err.message);
+    markButton(reshuffleBingo,'error','미션 다시 섞기');
+    alert('미션 다시 섞기 실패: '+err.message);
+  }
+});
+
+resetBingoChecks.addEventListener('click',async()=>{
+  if(!room||!amHost())return;
+  setActionStatus('loading','빙고 체크 초기화 중');
+  markButton(resetBingoChecks,'loading','체크만 초기화');
+  try{
+    const data=await api('/api/room/bingo/reset',{code:room.code,hostId:profile.soopId});
+    room=data.room;renderBingoWorkspace();
+    setActionStatus('success','체크 초기화 완료');
+    markButton(resetBingoChecks,'success','체크만 초기화');
+  }catch(err){
+    setActionStatus('error','체크 초기화 실패 · '+err.message);
+    markButton(resetBingoChecks,'error','체크만 초기화');
+    alert('체크 초기화 실패: '+err.message);
+  }
+});
+bingoBoards.addEventListener('click',async(e)=>{
+  const cell=e.target.closest('[data-board-key][data-cell-index]');
+  if(!cell||!room||cell.disabled)return;
+  const p=room.pendingDonation;
+  if(pendingMine()&&p?.stage==='cell'&&String(p.boardKey||'')===cell.dataset.boardKey){
+    cell.disabled=true;
+    try{
+      setActionStatus('loading','지정 칸 적용 중');
+      const data=await api('/api/room/donation/select-cell',{code:room.code,actorId:profile.soopId,index:cell.dataset.cellIndex});
+      room=data.room;renderBingoWorkspace();
+      setActionStatus('success',data.pending?`지정 완료 · ${room.pendingDonation?.remaining||0}칸 남음`:'지정 효과 적용 완료');
+      if(!data.pending)await sendSOOPChatAck('[빙고] 지정 칸 후원 효과 적용 완료');
+    }catch(err){setActionStatus('error','지정 칸 적용 실패 · '+err.message);alert(err.message)}
+    return;
+  }
+  cell.disabled=true;
+  try{
+    const data=await api('/api/room/bingo/toggle',{code:room.code,id:profile.soopId,boardKey:cell.dataset.boardKey,index:cell.dataset.cellIndex});
+    room=data.room;renderBingoWorkspace();
+  }catch(err){alert('빙고 체크 실패: '+err.message)}
+});
+
+members.addEventListener('click',async(e)=>{
+  const b=e.target.closest('[data-action]');if(!b||!room||!amHost())return;
+  const id=b.dataset.id;
+  if(b.dataset.action==='apply-member'){
+    const teamEl=members.querySelector(`[data-team-id="${CSS.escape(id)}"]`);
+    const roleEl=members.querySelector(`[data-role-id="${CSS.escape(id)}"]`);
+    b.disabled=true;
+    try{
+      const data=await api('/api/room/member/update',{code:room.code,hostId:profile.soopId,targetId:id,team:teamEl?teamEl.value:'미배정',role:roleEl?roleEl.value:'HOST'});
+      room=data.room;renderRoom();
+    }catch(err){alert('참가자 변경 실패: '+err.message)}
+    finally{b.disabled=false}
+  }
+  if(b.dataset.action==='kick-member'){
+    if(b.dataset.armed!=='1'){
+      b.dataset.armed='1';b.textContent='한 번 더';setTimeout(()=>{if(b.isConnected){b.dataset.armed='0';b.textContent='내보내기'}},3000);return;
+    }
+    b.disabled=true;
+    try{
+      const data=await api('/api/room/member/kick',{code:room.code,hostId:profile.soopId,targetId:id});
+      room=data.room;renderRoom();
+    }catch(err){alert('내보내기 실패: '+err.message)}
+  }
+});
+
+refreshMembers.addEventListener('click',()=>refreshRoom(true));
+let leaveArmedUntil=0;
+leaveRoom.addEventListener('click',async()=>{
+  if(!room||!profileReady())return;
+  const now=Date.now();
+  if(now>leaveArmedUntil){
+    leaveArmedUntil=now+3500;
+    leaveRoom.textContent='한 번 더 누르면 나가기';
+    leaveRoom.classList.add('armed');
+    setTimeout(()=>{if(Date.now()>leaveArmedUntil){leaveRoom.textContent='방 나가기';leaveRoom.classList.remove('armed')}},3600);
+    return;
+  }
+  leaveRoom.disabled=true;
+  const code=room.code;
+  try{await api('/api/room/leave',{code:code,id:profile.soopId});}
+  catch(e){console.warn('leave request failed',e);}
+  room=null;setRoomCode('');leaveArmedUntil=0;leaveRoom.textContent='방 나가기';leaveRoom.classList.remove('armed');leaveRoom.disabled=false;renderRoom();
+});
+async function checkServer(){try{await api('/api/health',{},'GET');syncChip.textContent='실시간 동기화 정상'}catch{syncChip.textContent='방 서버 연결 오류'}}
+let soopExt=null;
+function processSOOPChat(action,message){
+  console.log('SOOP chat event',action,message);
+  if(action==='BALLOON_GIFTED'){
+    const count=Number(message&&message.count)||0;
+    const donor=(message&&message.userNickname)||'SOOP 후원자';
+    soopApiStatus.textContent=`별풍선 수신 · ${count}개`;
+    soopApiStatus.className='apiStatus ok';
+    applyDonationEvent(count,donor,action);
+  }else if(action==='BATTLE_MISSION_GIFTED'){
+    soopApiStatus.textContent='배틀미션 후원 이벤트 수신';
+    soopApiStatus.className='apiStatus ok';
+  }
+}
+function initSOOP(){
+  try{
+    if(window.AFREECA&&window.AFREECA.ext){
+      soopExt=window.AFREECA.ext();
+      soopExt.handleInitialization(async(userInfo,broadInfo)=>{
+        detected={
+          bjId:broadInfo&&broadInfo.bjId?String(broadInfo.bjId):'',
+          bjNickname:broadInfo&&broadInfo.bjNickname?String(broadInfo.bjNickname):''
+        };
+        sdkBadge.textContent='SOOP EXTENSION READY';
+        sdkBadge.className='status ok';
+        soopApiStatus.textContent='SOOP SDK 연결 · 후원 수신 대기';
+        soopApiStatus.className='apiStatus ok';
+        chatAckStatus.textContent=(soopExt.chat&&typeof soopExt.chat.send==='function')?'채팅 안내 준비됨':'채팅 전송 API 확인 필요';
+        chatAckStatus.className=(soopExt.chat&&typeof soopExt.chat.send==='function')?'ackOk':'ackWait';
+        if(detected.bjId){
+          const localMatches=profile.soopId&&String(profile.soopId).toLowerCase()===detected.bjId.toLowerCase();
+          if(!localMatches)await restoreProfileFromServer(detected.bjId);
+        }
+        renderAuto();
+      });
+      if(soopExt.chat&&typeof soopExt.chat.listen==='function'){
+        soopExt.chat.listen((action,message)=>processSOOPChat(action,message));
+      }else{
+        soopApiStatus.textContent='채팅/후원 API 사용 불가';
+        soopApiStatus.className='apiStatus bad';
+      }
+      if(typeof soopExt.handleError==='function')soopExt.handleError(()=>{
+        sdkBadge.textContent='SOOP SDK ERROR';
+        soopApiStatus.textContent='SOOP SDK 오류';
+        soopApiStatus.className='apiStatus bad';
+      });
+    }else{
+      sdkBadge.textContent='LOCAL MODE';renderAuto();
+      soopApiStatus.textContent='일반 브라우저 · 수동 테스트 가능';
+      soopApiStatus.className='apiStatus warn';
+      chatAckStatus.textContent='SOOP 안에서만 채팅 전송';
+      chatAckStatus.className='ackWait';
+      if(profile.soopId)restoreProfileFromServer(profile.soopId);
+    }
+  }catch(e){
+    sdkBadge.textContent='SOOP SDK ERROR';renderAuto();
+    soopApiStatus.textContent='SOOP SDK 오류';
+    soopApiStatus.className='apiStatus bad';
+  }
+}
+renderProfile();renderRoom();startPolling();checkServer();if(currentRoomCode)refreshRoom(false);window.addEventListener('load',initSOOP);</script>
+</body>
+</html>
