@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: soop-content-maker-api
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    autoDeploy: true
