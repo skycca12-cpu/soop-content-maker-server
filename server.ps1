@@ -1,10 +1,18 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 $port = 8770
 if (-not [string]::IsNullOrWhiteSpace($env:PORT)) { $port = [int]$env:PORT }
 $root = Split-Path -Parent $MyInvocation.MyCommand.Path
 $listener = New-Object System.Net.HttpListener
-$listener.Prefixes.Add("http://*:$port/")
+$prefix = if ([string]::IsNullOrWhiteSpace($env:PORT)) { "http://127.0.0.1:$port/" } else { "http://*:$port/" }
+$listener.Prefixes.Add($prefix)
 $rooms = @{}
+$presence = @{}
+$isHosted = -not [string]::IsNullOrWhiteSpace($env:PORT)
+$adminKey = if ($isHosted) {
+  if ([string]::IsNullOrWhiteSpace($env:SOOP_ADMIN_KEY)) { '' } else { $env:SOOP_ADMIN_KEY }
+} else {
+  if ([string]::IsNullOrWhiteSpace($env:SOOP_ADMIN_KEY)) { 'CHANGE-ME-KIMMENTAL' } else { $env:SOOP_ADMIN_KEY }
+}
 
 # Persistent profile storage.
 # This survives a new trycloudflare URL and a server restart as long as this build folder remains.
@@ -15,6 +23,44 @@ if ([string]::IsNullOrWhiteSpace($dataBase)) { $dataBase = Join-Path $root "data
 $dataRoot = Join-Path $dataBase "SOOPContentMaker"
 $profileRoot = Join-Path $dataRoot "profiles"
 New-Item -ItemType Directory -Force -Path $profileRoot | Out-Null
+
+$updateFile = Join-Path $dataRoot "update-config.json"
+function Default-UpdateConfig {
+  return [ordered]@{ latestVersion='1.0.0'; notice=''; downloadUrl=''; publishedAt=0 }
+}
+function Load-UpdateConfig {
+  if (-not (Test-Path $updateFile -PathType Leaf)) { return (Default-UpdateConfig) }
+  try { return ([IO.File]::ReadAllText($updateFile,[Text.Encoding]::UTF8) | ConvertFrom-Json) } catch { return (Default-UpdateConfig) }
+}
+function Save-UpdateConfig($cfg) {
+  [IO.File]::WriteAllText($updateFile, ($cfg|ConvertTo-Json -Depth 5 -Compress), [Text.UTF8Encoding]::new($false))
+}
+function Admin-OK($key) { return (-not [string]::IsNullOrWhiteSpace($key) -and $key -eq $adminKey) }
+
+function Normalize-Name($name) { return ((''+$name).Trim().ToLowerInvariant() -replace '\s+',' ') }
+function Find-ProfileByName($name) {
+  $n=Normalize-Name $name
+  if ([string]::IsNullOrWhiteSpace($n)) { return $null }
+  foreach($file in Get-ChildItem -Path $profileRoot -Filter '*.json' -File -ErrorAction SilentlyContinue){
+    try{
+      $p=[IO.File]::ReadAllText($file.FullName,[Text.Encoding]::UTF8)|ConvertFrom-Json
+      if((Normalize-Name $p.name) -eq $n){ return $p }
+    }catch{}
+  }
+  return $null
+}
+function Streamer-Gate-OK($verified) {
+  if(-not $isHosted){ return $true }
+  return ((''+$verified).Trim() -eq '1')
+}
+function Valid-Game($game) {
+  return @('bingo','kill','pinball','roulette','pick','race','ladder','tetris','none') -contains ((''+$game).Trim().ToLower())
+}
+
+function Clean-Presence {
+  $now=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+  foreach($k in @($presence.Keys)){ if($now-[int64]$presence[$k].lastSeen -gt 90000){ $presence.Remove($k) } }
+}
 
 function Get-ProfileFile($id) {
   $normalized = (''+$id).Trim().ToLower()
@@ -56,6 +102,14 @@ function Load-Profile($id) {
 }
 
 
+
+function ConvertTo-HashtableRecursive($obj) {
+  if ($null -eq $obj) { return $null }
+  if ($obj -is [System.Collections.IDictionary]) { $h=@{}; foreach($k in $obj.Keys){$h[$k]=ConvertTo-HashtableRecursive $obj[$k]}; return $h }
+  if ($obj -is [System.Management.Automation.PSCustomObject]) { $h=@{}; foreach($pr in $obj.PSObject.Properties){$h[$pr.Name]=ConvertTo-HashtableRecursive $pr.Value}; return $h }
+  if (($obj -is [System.Collections.IEnumerable]) -and -not ($obj -is [string])) { return @($obj | ForEach-Object { ConvertTo-HashtableRecursive $_ }) }
+  return $obj
+}
 function Get-ContentType([string]$path) {
   $ext = [System.IO.Path]::GetExtension($path).ToLowerInvariant()
   switch ($ext) {
@@ -152,6 +206,7 @@ function Public-Room($room) {
     donationRules = $(if ($room.Contains('donationRules')) { @($room.donationRules) } else { @([ordered]@{count=30;target='self';effect='complete_cells';pick='random';value=1}) })
     pendingDonation = $(if ($room.Contains('pendingDonation')) { $room.pendingDonation } else { $null })
     donationLog = $(if ($room.Contains('donationLog')) { @($room.donationLog) } else { @() })
+    moduleStates = $(if ($room.Contains('moduleStates')) { $room.moduleStates } else { @{} })
   }
 }
 
@@ -186,55 +241,84 @@ function Get-LineIndexes($size, $type, $index) {
 
 function Apply-BingoEffect($room, $boardKey, $effect, $pick, $value, $selectedIndex=-1, $lineType='', $lineIndex=-1) {
   if ([string]::IsNullOrWhiteSpace($boardKey) -or -not $room.bingoBoards.ContainsKey($boardKey)) { return 0 }
+
   $board = $room.bingoBoards[$boardKey]
   $size = [int]$room.bingoSize
+  $effect = (''+$effect).Trim().ToLowerInvariant()
+  $pick = (''+$pick).Trim().ToLowerInvariant()
+  $value = [Math]::Max(1,[int]$value)
   $applied = 0
-  if ($value -lt 1) { $value = 1 }
 
-  if ($effect -eq 'complete_cells' -or $effect -eq 'reset_cells' -or $effect -eq 'replace_cells') {
+  if ($effect -in @('complete_cells','reset_cells','replace_cells')) {
     for ($k=0; $k -lt $value; $k++) {
+      $pool = New-Object System.Collections.ArrayList
+
+      for ($i=0; $i -lt $board.cells.Count; $i++) {
+        if ($effect -eq 'complete_cells' -and -not [bool]$board.checked[$i]) { [void]$pool.Add($i) }
+        elseif ($effect -eq 'reset_cells' -and [bool]$board.checked[$i]) { [void]$pool.Add($i) }
+        elseif ($effect -eq 'replace_cells') { [void]$pool.Add($i) }
+      }
+
       $idx = -1
       if ($selectedIndex -ge 0 -and $k -eq 0) {
-        $idx = $selectedIndex
-      } else {
-        $pool = New-Object System.Collections.ArrayList
-        for ($i=0; $i -lt $board.cells.Count; $i++) {
-          if ($effect -eq 'complete_cells' -and -not [bool]$board.checked[$i]) { [void]$pool.Add($i) }
-          elseif ($effect -eq 'reset_cells' -and [bool]$board.checked[$i]) { [void]$pool.Add($i) }
-          elseif ($effect -eq 'replace_cells') { [void]$pool.Add($i) }
-        }
-        if ($pool.Count -eq 0) { break }
-        $idx = $pool[(Get-Random -Minimum 0 -Maximum $pool.Count)]
+        if ($pool -contains $selectedIndex) { $idx = $selectedIndex }
+      } elseif ($pool.Count -gt 0) {
+        $idx = [int]$pool[(Get-Random -Minimum 0 -Maximum $pool.Count)]
       }
       if ($idx -lt 0 -or $idx -ge $board.cells.Count) { break }
 
       if ($effect -eq 'complete_cells') {
-        $c=@($board.checked); if (-not [bool]$c[$idx]) { $c[$idx]=$true; $applied++ }; $board.checked=$c
-      } elseif ($effect -eq 'reset_cells') {
-        $c=@($board.checked); if ([bool]$c[$idx]) { $c[$idx]=$false; $applied++ }; $board.checked=$c
-      } elseif ($effect -eq 'replace_cells') {
-        if ($room.bingoMissions.Count -gt 0) {
+        $c=@($board.checked)
+        if (-not [bool]$c[$idx]) { $c[$idx]=$true; $applied++ }
+        $board.checked=$c
+      }
+      elseif ($effect -eq 'reset_cells') {
+        $c=@($board.checked)
+        if ([bool]$c[$idx]) { $c[$idx]=$false; $applied++ }
+        $board.checked=$c
+      }
+      elseif ($effect -eq 'replace_cells') {
+        $missions=@($room.bingoMissions)
+        if ($missions.Count -gt 0) {
+          $old=''+$board.cells[$idx]
+          $choices=@($missions | Where-Object { (''+$_) -ne $old })
+          if ($choices.Count -eq 0) { $choices=$missions }
           $cells=@($board.cells)
-          $cells[$idx]=$room.bingoMissions[(Get-Random -Minimum 0 -Maximum $room.bingoMissions.Count)]
+          $cells[$idx]=$choices[(Get-Random -Minimum 0 -Maximum $choices.Count)]
           $board.cells=$cells
           $applied++
         }
       }
+
       if ($selectedIndex -ge 0) { break }
     }
   }
-  elseif ($effect -eq 'complete_line' -or $effect -eq 'reset_line') {
+  elseif ($effect -in @('complete_line','reset_line')) {
     if ([string]::IsNullOrWhiteSpace($lineType)) {
-      $choices = New-Object System.Collections.ArrayList
+      $eligible = New-Object System.Collections.ArrayList
+      $all = New-Object System.Collections.ArrayList
       for ($i=0; $i -lt $size; $i++) {
-        [void]$choices.Add([ordered]@{t='row';i=$i})
-        [void]$choices.Add([ordered]@{t='col';i=$i})
+        [void]$all.Add([ordered]@{t='row';i=$i})
+        [void]$all.Add([ordered]@{t='col';i=$i})
       }
-      [void]$choices.Add([ordered]@{t='diag1';i=0})
-      [void]$choices.Add([ordered]@{t='diag2';i=0})
-      $choice=$choices[(Get-Random -Minimum 0 -Maximum $choices.Count)]
-      $lineType=$choice.t; $lineIndex=[int]$choice.i
+      [void]$all.Add([ordered]@{t='diag1';i=0})
+      [void]$all.Add([ordered]@{t='diag2';i=0})
+
+      foreach ($cand in @($all)) {
+        $idxs=Get-LineIndexes $size $cand.t ([int]$cand.i)
+        $hasApplicable=$false
+        foreach ($idx in $idxs) {
+          if ($effect -eq 'complete_line' -and -not [bool]$board.checked[$idx]) { $hasApplicable=$true; break }
+          if ($effect -eq 'reset_line' -and [bool]$board.checked[$idx]) { $hasApplicable=$true; break }
+        }
+        if ($hasApplicable) { [void]$eligible.Add($cand) }
+      }
+      if ($eligible.Count -eq 0) { return 0 }
+      $choice=$eligible[(Get-Random -Minimum 0 -Maximum $eligible.Count)]
+      $lineType=''+$choice.t
+      $lineIndex=[int]$choice.i
     }
+
     $idxs=Get-LineIndexes $size $lineType $lineIndex
     $c=@($board.checked)
     foreach ($idx in $idxs) {
@@ -243,7 +327,7 @@ function Apply-BingoEffect($room, $boardKey, $effect, $pick, $value, $selectedIn
     }
     $board.checked=$c
   }
-  elseif ($effect -eq 'complete_all' -or $effect -eq 'reset_all') {
+  elseif ($effect -in @('complete_all','reset_all')) {
     $c=@($board.checked)
     for ($i=0; $i -lt $c.Count; $i++) {
       if ($effect -eq 'complete_all' -and -not [bool]$c[$i]) { $c[$i]=$true; $applied++ }
@@ -253,10 +337,22 @@ function Apply-BingoEffect($room, $boardKey, $effect, $pick, $value, $selectedIn
   }
   elseif ($effect -eq 'reshuffle') {
     $need=$size*$size
-    $board.cells=@($room.bingoMissions | Sort-Object {Get-Random} | Select-Object -First $need)
-    $board.checked=@($false)*$need
-    $applied=$need
+    $missions=@($room.bingoMissions)
+    if ($missions.Count -gt 0) {
+      $shuffled=@($missions | Sort-Object {Get-Random})
+      $cells=New-Object System.Collections.ArrayList
+      while ($cells.Count -lt $need) {
+        foreach ($m in $shuffled) {
+          if ($cells.Count -ge $need) { break }
+          [void]$cells.Add($m)
+        }
+      }
+      $board.cells=@($cells)
+      $board.checked=@($false)*$need
+      $applied=$need
+    }
   }
+
   return $applied
 }
 
@@ -282,7 +378,7 @@ try { $listener.Start() } catch {
 
 Clear-Host
 Write-Host "====================================================" -ForegroundColor Cyan
-Write-Host " SOOP CONTENT MAKER - FIXED BACKEND BUILD 13" -ForegroundColor Cyan
+Write-Host " SOOP CONTENT MAKER - RELEASE CANDIDATE V15" -ForegroundColor Cyan
 Write-Host " PERSISTENT PROFILE / TEAM / RECONNECT" -ForegroundColor Cyan
 Write-Host "====================================================" -ForegroundColor Cyan
 Write-Host ""
@@ -328,7 +424,48 @@ while($listener.IsListening){
     }
 
     if ($path -eq '/api/health') {
-      Send-Json $ctx ([ordered]@{ok=$true; message='CORE BUILD 11 SUPPORT RULES ready'})
+      Send-Json $ctx ([ordered]@{ok=$true; message='V15 RC / ISOLATED API / ADMIN / STREAMER GATE ready'})
+      continue
+    }
+
+
+    if ($path -eq '/api/update/get' -and $req.HttpMethod -eq 'GET') {
+      Send-Json $ctx ([ordered]@{ok=$true;update=(Load-UpdateConfig)})
+      continue
+    }
+
+    if ($path -eq '/api/presence/heartbeat' -and $req.HttpMethod -eq 'POST') {
+      $f=Read-Form $req
+      $id=(''+$f['id']).Trim().ToLower()
+      if(-not [string]::IsNullOrWhiteSpace($id)){
+        $presence[$id]=[ordered]@{
+          id=$f['id']; name=$f['name']; img=$f['img']; room=$f['room']; content=$f['content']; activeGame=$f['activeGame']; version=$f['version'];
+          apiConnected=((''+$f['apiConnected']).Trim() -eq '1'); streamerVerified=((''+$f['streamerVerified']).Trim() -eq '1'); lastApiEvent=$f['lastApiEvent'];
+          lastSeen=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+        }
+      }
+      Send-Json $ctx ([ordered]@{ok=$true;update=(Load-UpdateConfig)})
+      continue
+    }
+
+    if ($path -eq '/api/admin/status' -and $req.HttpMethod -eq 'GET') {
+      $key=(''+$req.QueryString['key']).Trim()
+      if($isHosted -and [string]::IsNullOrWhiteSpace($adminKey)){ Send-Json $ctx ([ordered]@{ok=$false;message='서버에 SOOP_ADMIN_KEY 환경변수가 설정되지 않았습니다.'}) 503; continue }; if(-not (Admin-OK $key)){ Send-Json $ctx ([ordered]@{ok=$false;message='관리자 키가 맞지 않습니다.'}) 403; continue }
+      Clean-Presence
+      $active=@($presence.Values | Sort-Object lastSeen -Descending)
+      $roomRows=@()
+      foreach($r in $rooms.Values){ $roomRows += [ordered]@{code=$r.code;name=$r.name;content=$r.content;members=$r.members.Count;createdAt=$r.createdAt} }
+      Send-Json $ctx ([ordered]@{ok=$true;now=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds();online=$active.Count;users=$active;rooms=$roomRows;update=(Load-UpdateConfig)})
+      continue
+    }
+
+    if ($path -eq '/api/admin/update' -and $req.HttpMethod -eq 'POST') {
+      $f=Read-Form $req
+      if($isHosted -and [string]::IsNullOrWhiteSpace($adminKey)){ Send-Json $ctx ([ordered]@{ok=$false;message='서버에 SOOP_ADMIN_KEY 환경변수가 설정되지 않았습니다.'}) 503; continue }; if(-not (Admin-OK ((''+$f['key']).Trim()))){ Send-Json $ctx ([ordered]@{ok=$false;message='관리자 키가 맞지 않습니다.'}) 403; continue }
+      $cfg=[ordered]@{latestVersion=((''+$f['latestVersion']).Trim());notice=((''+$f['notice']).Trim());downloadUrl=((''+$f['downloadUrl']).Trim());publishedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()}
+      if([string]::IsNullOrWhiteSpace($cfg.latestVersion)){ $cfg.latestVersion='1.0.0' }
+      Save-UpdateConfig $cfg
+      Send-Json $ctx ([ordered]@{ok=$true;update=$cfg})
       continue
     }
 
@@ -336,6 +473,11 @@ while($listener.IsListening){
       $f = Read-Form $req
       if ([string]::IsNullOrWhiteSpace($f['name']) -or [string]::IsNullOrWhiteSpace($f['soopId'])) {
         Send-Json $ctx ([ordered]@{ok=$false;message='스트리머 이름과 SOOP ID가 필요합니다.'}) 400
+        continue
+      }
+      $existingByName = Find-ProfileByName $f['name']
+      if($null -ne $existingByName -and ((''+$existingByName.soopId).Trim().ToLower()) -ne ((''+$f['soopId']).Trim().ToLower())) {
+        Send-Json $ctx ([ordered]@{ok=$false;message='이미 다른 스트리머가 사용 중인 닉네임입니다. 다른 닉네임을 사용해 주세요.'}) 409
         continue
       }
       $saved = Save-Profile $f
@@ -364,6 +506,7 @@ while($listener.IsListening){
         Send-Json $ctx ([ordered]@{ok=$false; message='프로필 이름/SOOP ID가 필요합니다.'}) 400
         continue
       }
+      if(-not (Streamer-Gate-OK $f['verified'])) { Send-Json $ctx ([ordered]@{ok=$false;message='SOOP 스트리머 인증이 필요합니다. SOOP 확장 프로그램에서 본인 방송으로 실행해 주세요.'}) 403; continue }
       $max = 8
       [int]::TryParse($f['max'], [ref]$max) | Out-Null
       if ($max -lt 2) { $max = 2 }
@@ -372,12 +515,12 @@ while($listener.IsListening){
       $members = New-Object System.Collections.ArrayList
       [void]$members.Add([ordered]@{
         name=$f['nameHost'];soopId=$f['idHost'];img=$f['imgHost'];
-        role='HOST';team='1팀';joinedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+        role='HOST';team='1팀';activeGame='none';apiConnected=$false;lastApiEvent=0;joinedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
       })
       $room = [ordered]@{
         code=$code;name=$f['name'];theme=$f['theme'];max=$max;
         password=$f['password'];members=$members;
-        teamCount=8;content='none';bingoMode='team';bingoSize=5;bingoMissions=@();bingoBoards=@{};donationThreshold=30;donationRewardCells=1;donationRules=@([ordered]@{count=30;target='self';effect='complete_cells';pick='random';value=1});pendingDonation=$null;donationLog=@();
+        teamCount=8;content='none';bingoMode='team';bingoSize=5;bingoMissions=@();bingoBoards=@{};donationThreshold=30;donationRewardCells=1;donationRules=@([ordered]@{count=30;target='self';effect='complete_cells';pick='random';value=1});pendingDonation=$null;donationLog=@();moduleStates=@{};
         createdAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
       }
       $rooms[$code] = $room
@@ -395,12 +538,19 @@ while($listener.IsListening){
       }
       $id = (''+$f['id']).Trim()
       if ([string]::IsNullOrWhiteSpace($id)) { Send-Json $ctx ([ordered]@{ok=$false;message='SOOP ID가 필요합니다.'}) 400; continue }
+      if(-not (Streamer-Gate-OK $f['verified'])) { Send-Json $ctx ([ordered]@{ok=$false;message='SOOP 스트리머 인증이 필요합니다. SOOP 확장 프로그램에서 본인 방송으로 실행해 주세요.'}) 403; continue }
+      $joinName=(''+$f['name']).Trim()
+      $dupName=@($room.members | Where-Object { (Normalize-Name $_.name) -eq (Normalize-Name $joinName) -and (''+$_.soopId).ToLower() -ne $id.ToLower() }) | Select-Object -First 1
+      if($null -ne $dupName){ Send-Json $ctx ([ordered]@{ok=$false;message='이 방에서 이미 사용 중인 닉네임입니다.'}) 409; continue }
 
       # Reconnect: same SOOP ID returns to the same slot and keeps team/role.
       $existing = @($room.members | Where-Object { (''+$_.soopId).ToLower() -eq $id.ToLower() }) | Select-Object -First 1
       if ($null -ne $existing) {
         if (-not [string]::IsNullOrWhiteSpace($f['name'])) { $existing.name = $f['name'] }
         if (-not [string]::IsNullOrWhiteSpace($f['img'])) { $existing.img = $f['img'] }
+        if(-not $existing.Contains('activeGame')){$existing.activeGame='none'}
+        if(-not $existing.Contains('apiConnected')){$existing.apiConnected=$false}
+        if(-not $existing.Contains('lastApiEvent')){$existing.lastApiEvent=0}
         Send-Json $ctx ([ordered]@{ok=$true;reconnected=$true;room=(Public-Room $room)})
         continue
       }
@@ -411,7 +561,7 @@ while($listener.IsListening){
       }
       [void]$room.members.Add([ordered]@{
         name=$f['name'];soopId=$id;img=$f['img'];
-        role='PLAYER';team='미배정';joinedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+        role='PLAYER';team='미배정';activeGame='none';apiConnected=$false;lastApiEvent=0;joinedAt=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
       })
       Send-Json $ctx ([ordered]@{ok=$true;reconnected=$false;room=(Public-Room $room)})
       continue
@@ -457,6 +607,23 @@ while($listener.IsListening){
       continue
     }
 
+
+    if ($path -eq '/api/room/member/activity' -and $req.HttpMethod -eq 'POST') {
+      $f=Read-Form $req
+      $code=(''+$f['code']).Trim().ToUpper();$actor=(''+$f['actorId']).Trim()
+      if(-not $rooms.ContainsKey($code)){Send-Json $ctx ([ordered]@{ok=$false;message='방을 찾을 수 없습니다.'}) 404;continue}
+      $room=$rooms[$code]
+      $m=@($room.members|Where-Object{(''+$_.soopId).ToLower() -eq $actor.ToLower()})|Select-Object -First 1
+      if($null -eq $m){Send-Json $ctx ([ordered]@{ok=$false;message='방 참가자를 찾을 수 없습니다.'}) 404;continue}
+      $game=((''+$f['activeGame']).Trim().ToLower());if(-not (Valid-Game $game)){$game='none'}
+      $m.activeGame=$game
+      $m.apiConnected=((''+$f['apiConnected']).Trim() -eq '1')
+      [int64]$evt=0;[int64]::TryParse((''+$f['lastApiEvent']),[ref]$evt)|Out-Null
+      if($evt -gt 0){$m.lastApiEvent=$evt}
+      Send-Json $ctx ([ordered]@{ok=$true;room=(Public-Room $room)})
+      continue
+    }
+
     if ($path -eq '/api/room/content' -and $req.HttpMethod -eq 'POST') {
       $f = Read-Form $req
       $code = (''+$f['code']).Trim().ToUpper()
@@ -464,7 +631,7 @@ while($listener.IsListening){
       $room = $rooms[$code]
       if (-not (Is-Host $room $f['hostId'])) { Send-Json $ctx ([ordered]@{ok=$false;message='방장만 콘텐츠를 선택할 수 있습니다.'}) 403; continue }
       $content = (''+$f['content']).Trim().ToLower()
-      if (@('bingo','kill','pinball','race','ladder') -notcontains $content) { $content = 'none' }
+      if (@('bingo','kill','pinball','roulette','pick','race','ladder','tetris') -notcontains $content) { $content = 'none' }
       $room.content = $content
       Send-Json $ctx ([ordered]@{ok=$true;room=(Public-Room $room)})
       continue
@@ -620,9 +787,9 @@ while($listener.IsListening){
           if ($value -lt 1) { $value=1 }; if ($value -gt 100) { $value=100 }
           $target=(''+$r.target)
           if (@('self','random_player','selected_player','random_enemy_team','selected_team','all') -notcontains $target) { $target='self' }
-          $effect=(''+$r.effect)
+          $effect=(''+$r.effect).Trim().ToLowerInvariant()
           if (@('complete_cells','reset_cells','replace_cells','complete_line','reset_line','complete_all','reset_all','reshuffle') -notcontains $effect) { $effect='complete_cells' }
-          $pick=(''+$r.pick)
+          $pick=(''+$r.pick).Trim().ToLowerInvariant()
           if (@('random','select') -notcontains $pick) { $pick='random' }
           [void]$rules.Add([ordered]@{count=$count;target=$target;effect=$effect;pick=$pick;value=$value})
         }
@@ -651,7 +818,10 @@ while($listener.IsListening){
         continue
       }
 
-      $target=(''+$matched.target); $effect=(''+$matched.effect); $pick=(''+$matched.pick); $value=[int]$matched.value
+      $target=(''+$matched.target).Trim().ToLowerInvariant()
+      $effect=(''+$matched.effect).Trim().ToLowerInvariant()
+      $pick=(''+$matched.pick).Trim().ToLowerInvariant()
+      $value=[int]$matched.value
       $boardKeys=New-Object System.Collections.ArrayList
       $needTarget=$false; $targetKind=''
 
@@ -706,7 +876,11 @@ while($listener.IsListening){
       $applied=0
       foreach ($k in @($boardKeys)) { $applied += Apply-BingoEffect $room $k $effect $pick $value }
       Add-DonationLog $room $f $member ($boardKeys -join ',') $effect $applied
-      Send-Json $ctx ([ordered]@{ok=$true;applied=$applied;pending=$false;room=(Public-Room $room)})
+      Send-Json $ctx ([ordered]@{
+        ok=$true; applied=$applied; pending=$false
+        matchedRule=[ordered]@{count=[int]$matched.count;target=$target;effect=$effect;pick=$pick;value=$value}
+        room=(Public-Room $room)
+      })
       continue
     }
 
@@ -802,6 +976,58 @@ while($listener.IsListening){
       $room.bingoMode = $mode
       $room.bingoSize = $size
       $room.bingoBoards = @{}
+      Send-Json $ctx ([ordered]@{ok=$true;room=(Public-Room $room)})
+      continue
+    }
+
+    if ($path -eq '/api/room/module/save' -and $req.HttpMethod -eq 'POST') {
+      $f = Read-Form $req
+      $code=(''+$f['code']).Trim().ToUpper(); $actor=(''+$f['actorId']).Trim(); $module=(''+$f['module']).Trim().ToLower()
+      if (-not $rooms.ContainsKey($code)) { Send-Json $ctx ([ordered]@{ok=$false;message='방을 찾을 수 없습니다.'}) 404; continue }
+      $room=$rooms[$code]
+      $member=@($room.members | Where-Object { (''+$_.soopId).ToLower() -eq $actor.ToLower() })
+      if ($member.Count -eq 0) { Send-Json $ctx ([ordered]@{ok=$false;message='방 참가자만 변경할 수 있습니다.'}) 403; continue }
+      if (@('pubgbingo','kill','pinball','roulette','pick','race','ladder','tetris') -notcontains $module) { Send-Json $ctx ([ordered]@{ok=$false;message='지원하지 않는 콘텐츠입니다.'}) 400; continue }
+      try { $state = ConvertTo-HashtableRecursive (ConvertFrom-Json -InputObject (''+$f['state'])) } catch { Send-Json $ctx ([ordered]@{ok=$false;message='콘텐츠 상태 형식이 올바르지 않습니다.'}) 400; continue }
+      if (-not $room.Contains('moduleStates')) { $room.moduleStates=@{} }
+      $room.moduleStates[$module]=$state
+      Send-Json $ctx ([ordered]@{ok=$true;room=(Public-Room $room)})
+      continue
+    }
+
+    if ($path -eq '/api/room/live/state' -and $req.HttpMethod -eq 'POST') {
+      $f = Read-Form $req
+      $code=(''+$f['code']).Trim().ToUpper(); $actor=(''+$f['actorId']).Trim(); $module=(''+$f['module']).Trim().ToLower()
+      if (-not $rooms.ContainsKey($code)) { Send-Json $ctx ([ordered]@{ok=$false;message='방을 찾을 수 없습니다.'}) 404; continue }
+      $room=$rooms[$code]
+      $member=@($room.members | Where-Object { (''+$_.soopId).ToLower() -eq $actor.ToLower() }) | Select-Object -First 1
+      if ($null -eq $member -or $member.role -eq 'VIEWER') { Send-Json $ctx ([ordered]@{ok=$false;message='참가자만 진행 상태를 보낼 수 있습니다.'}) 403; continue }
+      if (@('bingo','kill') -notcontains $module) { Send-Json $ctx ([ordered]@{ok=$false;message='지원하지 않는 순위 모듈입니다.'}) 400; continue }
+      try { $state = ConvertTo-HashtableRecursive (ConvertFrom-Json -InputObject (''+$f['state'])) } catch { Send-Json $ctx ([ordered]@{ok=$false;message='진행 상태 형식이 올바르지 않습니다.'}) 400; continue }
+      if (-not $room.Contains('moduleStates')) { $room.moduleStates=@{} }
+      if (-not $room.moduleStates.ContainsKey('live')) { $room.moduleStates['live']=@{} }
+      $live=$room.moduleStates['live']
+      if (-not $live.ContainsKey($module)) { $live[$module]=@{players=@{}} }
+      if (-not $live[$module].ContainsKey('players')) { $live[$module]['players']=@{} }
+      $state['name']=''+$member.name; $state['team']=''+$member.team; $state['updatedAt']=[DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds()
+      $live[$module].players[$actor.ToLower()]=$state
+      Send-Json $ctx ([ordered]@{ok=$true;room=(Public-Room $room)})
+      continue
+    }
+
+    if ($path -eq '/api/room/tetris/state' -and $req.HttpMethod -eq 'POST') {
+      $f = Read-Form $req
+      $code=(''+$f['code']).Trim().ToUpper(); $actor=(''+$f['actorId']).Trim()
+      if (-not $rooms.ContainsKey($code)) { Send-Json $ctx ([ordered]@{ok=$false;message='방을 찾을 수 없습니다.'}) 404; continue }
+      $room=$rooms[$code]
+      $member=@($room.members | Where-Object { (''+$_.soopId).ToLower() -eq $actor.ToLower() }) | Select-Object -First 1
+      if ($null -eq $member -or $member.role -eq 'VIEWER') { Send-Json $ctx ([ordered]@{ok=$false;message='테트리스 참가자만 상태를 보낼 수 있습니다.'}) 403; continue }
+      try { $state = ConvertTo-HashtableRecursive (ConvertFrom-Json -InputObject (''+$f['state'])) } catch { Send-Json $ctx ([ordered]@{ok=$false;message='테트리스 상태 형식이 올바르지 않습니다.'}) 400; continue }
+      if (-not $room.Contains('moduleStates')) { $room.moduleStates=@{} }
+      if (-not $room.moduleStates.ContainsKey('tetris')) { $room.moduleStates['tetris']=@{players=@{}} }
+      $tt=$room.moduleStates['tetris']
+      if (-not $tt.ContainsKey('players')) { $tt['players']=@{} }
+      $tt.players[$actor.ToLower()]=$state
       Send-Json $ctx ([ordered]@{ok=$true;room=(Public-Room $room)})
       continue
     }
