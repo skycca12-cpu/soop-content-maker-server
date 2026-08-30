@@ -3,16 +3,16 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SOOP 콘텐츠 메이커 - CORE BUILD 4</title>
+<title>종합게임 API v1.0.0</title>
 <script defer src="https://static.sooplive.com/asset/app/extension-helper/soop-extension-sdk.js"></script>
 <style>
-*{box-sizing:border-box} :root{--bg:#07111d;--panel:#0d1d2d;--panel2:#10283a;--line:#28495f;--text:#f7fbff;--muted:#97b2c5;--cyan:#4ed4ff;--green:#7df0ae;--orange:#ffb45c;--red:#ff7188;--purple:#c494ff}
-body{margin:0;background:radial-gradient(circle at 8% 5%,#16334d 0,transparent 28%),radial-gradient(circle at 95% 10%,#372557 0,transparent 25%),var(--bg);color:var(--text);font-family:Arial,"Noto Sans KR",sans-serif;min-height:100vh}
+*{box-sizing:border-box} :root{--bg:#eaf7ff;--panel:#ffffff;--panel2:#f3faff;--line:#a9d7ed;--text:#173247;--muted:#628298;--cyan:#159fd0;--green:#27a96b;--orange:#e88b28;--red:#dc5670;--purple:#8d66d8}
+body{margin:0;background:radial-gradient(circle at 8% 5%,#bcecff 0,transparent 30%),radial-gradient(circle at 95% 10%,#eadcff 0,transparent 27%),linear-gradient(180deg,#f8fcff,#e9f6ff 72%,#f5fbff);color:var(--text);font-family:Arial,"Noto Sans KR",sans-serif;min-height:100vh}
 button,input,select{font:inherit} button{cursor:pointer}.app{max-width:1180px;margin:auto;padding:18px}.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:16px}.brand{display:flex;gap:12px;align-items:center}.logo{width:48px;height:48px;border-radius:15px;display:grid;place-items:center;font-size:25px;background:linear-gradient(145deg,#1ec7ff,#7257ff);box-shadow:0 8px 30px #1ec7ff33}.brand h1{font-size:24px;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:12px}.status{padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:#091722;color:var(--muted);font-size:12px;font-weight:800}.status.ok{color:var(--green);border-color:#2e7651}
 .hero{position:relative;overflow:hidden;border:1px solid #315b77;border-radius:22px;padding:24px;background:linear-gradient(125deg,#0f2b40ee,#101d31ee 55%,#291c3eee)}.hero:after{content:"";position:absolute;width:260px;height:260px;border-radius:50%;right:-70px;top:-120px;background:radial-gradient(circle,#79dbff38,transparent 68%)}.eyebrow{color:var(--cyan);font-size:12px;font-weight:900;letter-spacing:.12em}.hero h2{font-size:30px;line-height:1.25;margin:8px 0}.hero p{max-width:720px;color:#b9d0df;line-height:1.6;margin:0}.steps{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}.step{padding:7px 10px;border-radius:999px;background:#071522aa;border:1px solid #2b4c63;color:#9fbdcf;font-size:12px}.step.on{color:#fff;border-color:#49c9f0;background:#12374d}
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.card{background:#0a1826e8;border:1px solid var(--line);border-radius:18px;padding:16px;min-width:0}.card h3{margin:0 0 4px;font-size:17px}.desc{color:var(--muted);font-size:12px;line-height:1.5}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:13px}.field.full{grid-column:1/-1}.field label{display:block;color:#a9c4d6;font-size:11px;margin-bottom:5px;font-weight:700}.field input,.field select{width:100%;border:1px solid #355870;border-radius:10px;background:#071521;color:white;padding:10px 11px;outline:none}.field input:focus,.field select:focus{border-color:#58d7ff;box-shadow:0 0 0 3px #46cfff16}.primary,.secondary,.danger{border:0;border-radius:11px;padding:11px 14px;font-weight:900}.primary{background:linear-gradient(135deg,#25bce9,#4077ee);color:#fff}.secondary{background:#19344a;color:#d9effc;border:1px solid #355e79}.danger{background:#4c2130;color:#ff9fb0;border:1px solid #723347}.wide{width:100%}.actions{display:flex;gap:8px;margin-top:11px;flex-wrap:wrap}.hint{margin-top:9px;padding:9px 11px;border-radius:10px;background:#08131e;border:1px dashed #31536a;color:#8fb0c4;font-size:11px;line-height:1.5}.profilePreview{display:flex;gap:12px;align-items:center;margin-top:13px;padding:12px;border-radius:14px;background:linear-gradient(135deg,#0c2131,#111a29);border:1px solid #2e4d63}.avatar{width:64px;height:64px;border-radius:18px;object-fit:cover;background:#17334a;border:2px solid #4ecfff}.avatar.small{width:42px;height:42px;border-radius:12px}.profilePreview b{display:block;font-size:17px}.profilePreview span{color:var(--muted);font-size:11px}.auto{margin-top:10px;padding:10px;border-radius:11px;background:#0a2018;border:1px solid #245c42;color:#8decb4;font-size:12px}.auto.warn{background:#281d0b;border-color:#68501f;color:#ffd786}
 .themes{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px}.theme{position:relative;border:1px solid #35546b;border-radius:13px;padding:13px 10px;min-height:84px;background:#0b1926;color:#fff;text-align:left}.theme.active{outline:2px solid #58d8ff;border-color:#58d8ff}.theme b{display:block}.theme small{display:block;color:#a5bfd0;margin-top:5px}.theme.heroTheme{background:linear-gradient(145deg,#0d3950,#242d55)}.theme.battleTheme{background:linear-gradient(145deg,#2e3027,#151b19)}.theme.funTheme{background:linear-gradient(145deg,#39233e,#233654)}
-.roomCode{font-size:28px;letter-spacing:.12em;font-weight:900;color:#73e7ff;margin:10px 0}.roomPanel{margin-top:12px;border-radius:15px;padding:14px;background:linear-gradient(120deg,#0a2232,#151d31);border:1px solid #2d536d}.roomMeta{display:flex;gap:8px;flex-wrap:wrap}.chip{font-size:11px;padding:6px 8px;border-radius:999px;background:#071521;border:1px solid #315268;color:#abd0e6}.members{display:grid;gap:7px;margin-top:10px}.member{display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center;padding:8px;border-radius:12px;background:#071522;border:1px solid #243f52}.member b{font-size:13px}.member small{display:block;color:#819eb2;margin-top:2px}.me{color:#7df0ae;font-size:10px;font-weight:900}.contentPreview{grid-column:1/-1}.contentCards{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:12px}.content{min-height:98px;border:1px solid #31516a;border-radius:14px;padding:12px;background:#081722}.content .ico{font-size:25px}.content b{display:block;margin-top:6px}.content small{color:#88a7bb}.content.locked{opacity:.58}.footer{margin-top:14px;color:#738fa3;font-size:11px;text-align:center}.hidden{display:none!important}
+.roomCode{font-size:28px;letter-spacing:.12em;font-weight:900;color:#73e7ff;margin:10px 0}.roomPanel{margin-top:12px;border-radius:15px;padding:14px;background:linear-gradient(120deg,#0a2232,#151d31);border:1px solid #2d536d}.roomMeta{display:flex;gap:8px;flex-wrap:wrap}.chip{font-size:11px;padding:6px 8px;border-radius:999px;background:#071521;border:1px solid #315268;color:#abd0e6}.members{display:grid;gap:7px;margin-top:10px}.member{display:grid;grid-template-columns:42px 1fr auto;gap:9px;align-items:center;padding:8px;border-radius:12px;background:#071522;border:1px solid #243f52}.member b{font-size:13px}.member small{display:block;color:#819eb2;margin-top:2px}.me{color:#7df0ae;font-size:10px;font-weight:900}.contentPreview{grid-column:1/-1}.contentCards{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:12px}.content{min-height:98px;border:1px solid #31516a;border-radius:14px;padding:12px;background:#081722}.content .ico{font-size:25px}.content b{display:block;margin-top:6px}.content small{color:#88a7bb}.content.locked{opacity:.58}.footer{margin-top:14px;color:#738fa3;font-size:11px;text-align:center}.hidden{display:none!important}
 @media(max-width:850px){.grid{grid-template-columns:1fr}.contentPreview{grid-column:auto}.contentCards{grid-template-columns:repeat(2,1fr)}.themes{grid-template-columns:1fr}.formgrid{grid-template-columns:1fr}.field.full{grid-column:auto}.hero h2{font-size:25px}}
 
 .managerBar{display:grid;grid-template-columns:1fr 180px auto auto;gap:8px;margin:12px 0}
@@ -200,29 +200,115 @@ select:focus,input:focus,textarea:focus{outline:2px solid rgba(83,207,255,.55);o
 .ackOk{color:#89ffc0!important}.ackBad{color:#ff9cac!important}.ackWait{color:#ffd987!important}
 @media(max-width:800px){.myApiIdentity{grid-template-columns:1fr}.simRow{grid-template-columns:1fr}}
 
+
+.moduleWorkspace{margin-top:12px;border:1px solid #31516a;border-radius:16px;background:#071722;padding:14px}.moduleWorkspace.hidden{display:none}.moduleHead{display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px}.moduleHead h4{margin:0;font-size:16px}.moduleHead small{color:#8eacbf}.moduleGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}.moduleBox{border:1px solid #29495f;border-radius:12px;background:#091c29;padding:11px}.moduleBox label{display:grid;gap:5px;color:#8fb0c5;font-size:11px;font-weight:800}.moduleBox input,.moduleBox select,.moduleBox textarea{width:100%;box-sizing:border-box;border:1px solid #355870;border-radius:9px;background:#06131e;color:#fff;padding:8px}.moduleActions{display:flex;gap:7px;flex-wrap:wrap;margin-top:10px}.gameTable{display:grid;gap:6px;margin-top:10px}.gameRow{display:grid;grid-template-columns:minmax(110px,1fr) 70px 80px 1fr;gap:7px;align-items:center;padding:8px;border:1px solid #29495f;border-radius:10px;background:#081722}.scoreBig{font-size:20px;font-weight:950;color:#79e6ff}.miniAction{padding:6px 8px;border:1px solid #3a627b;border-radius:8px;background:#102b3d;color:#fff;font-weight:900}.pubgGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:10px}.pubgCell{min-height:62px;padding:7px;border:1px solid #536b45;border-radius:9px;background:#172016;color:#f1f7e8;font-size:11px;font-weight:800}.pubgCell.done{background:#39532b;border-color:#a6dc68;text-decoration:line-through}.rouletteWheel{width:210px;height:210px;border-radius:50%;margin:12px auto;display:grid;place-items:center;border:10px solid #213b50;background:conic-gradient(#27475d 0 45deg,#55365d 45deg 90deg,#27475d 90deg 135deg,#55365d 135deg 180deg,#27475d 180deg 225deg,#55365d 225deg 270deg,#27475d 270deg 315deg,#55365d 315deg);box-shadow:0 0 30px #4ccfff22}.rouletteWheel.spin{animation:wheelSpin 1.8s cubic-bezier(.12,.75,.18,1)}@keyframes wheelSpin{to{transform:rotate(1440deg)}}.raceTrack{display:grid;gap:8px;margin-top:12px}.raceLane{position:relative;height:42px;border:1px solid #355870;border-radius:10px;background:linear-gradient(90deg,#0a1925,#142737);overflow:hidden}.raceRunner{position:absolute;left:6px;top:5px;height:30px;display:flex;align-items:center;gap:6px;transition:left .18s linear;font-size:12px;font-weight:900}.raceRunner img,.ballFace{width:30px;height:30px;border-radius:50%;object-fit:cover;background:#21384a}.ladderResult{display:grid;grid-template-columns:1fr 30px 1fr;gap:8px;align-items:center;padding:8px;border-bottom:1px solid #29495f}.pinField{position:relative;height:280px;border:1px solid #31516a;border-radius:14px;background:radial-gradient(circle at 50% 0,#16354b,#06131e 70%);overflow:hidden;margin-top:10px}.pinPeg{position:absolute;width:9px;height:9px;border-radius:50%;background:#79dbff;box-shadow:0 0 8px #79dbff}.pinBall{position:absolute;width:32px;height:32px;border-radius:50%;border:2px solid #fff;background:#ff7b86;display:grid;place-items:center;overflow:hidden;transition:transform .08s linear}.pinBall img{width:100%;height:100%;object-fit:cover}.resultBanner{margin-top:10px;padding:12px;border-radius:12px;background:#102c3f;border:1px solid #3e718e;text-align:center;font-size:18px;font-weight:950}.overlayLink{font-size:11px;color:#7fe6ff;word-break:break-all}@media(max-width:850px){.moduleGrid{grid-template-columns:1fr}.gameRow{grid-template-columns:1fr 60px 70px}.gameRow .moduleActions{grid-column:1/-1}.pubgCell{min-height:52px;font-size:10px}}
+
+/* V5 BRIGHT SOCIAL UI */
+.card,.roomPanel,.hostTools,.teamSection,.content,.finalGameShell,.profilePreview{background:rgba(255,255,255,.92)!important;border-color:#b9dbea!important;color:#173247!important;box-shadow:0 8px 30px rgba(61,130,165,.08)}
+.hero{background:linear-gradient(125deg,#ffffffee,#eef9ffee 52%,#f4efffee)!important;border-color:#b6ddef!important}.hero p,.desc,.brand p,.muted,.footer,.content small,.member small,.finalGameTop small{color:#628298!important}
+.field label,.hostToolsTitle{color:#416f89!important}.field input,.field select,.managerBar input,.managerBar select,.roomSettings input,.roomSettings select,.teamInput,.roleSelect{background:#f8fcff!important;color:#173247!important;border-color:#a9cfe2!important}
+.secondary,.miniBtn{background:#edf8ff!important;color:#285873!important;border-color:#aad4e8!important}.danger,.dangerMini{background:#fff0f3!important;color:#a83f55!important;border-color:#efb3bf!important}.chip,.status,.step,.hint{background:#f5fbff!important;color:#557b91!important;border-color:#bddbea!important}
+.member{background:#fbfdff!important;color:#173247!important}.member.team-1{background:linear-gradient(90deg,#ffe9ed,#fbfdff 38%)!important}.member.team-2{background:linear-gradient(90deg,#e6f3ff,#fbfdff 38%)!important}.member.team-3{background:linear-gradient(90deg,#fff7d9,#fbfdff 38%)!important}.member.team-4{background:linear-gradient(90deg,#f0e7ff,#fbfdff 38%)!important}.member.team-5{background:linear-gradient(90deg,#e6f9ed,#fbfdff 38%)!important}.member.team-6{background:linear-gradient(90deg,#fff0e3,#fbfdff 38%)!important}.member.team-7{background:linear-gradient(90deg,#e6fbfe,#fbfdff 38%)!important}.member.team-8{background:linear-gradient(90deg,#ffe9f7,#fbfdff 38%)!important}
+.finalGameTop b{color:#173247!important}.roomCode{color:#138ebc!important}.content.selected{box-shadow:0 0 0 2px #36b6e7 inset;background:#eefaff!important}
+.roomRosterStrip{display:flex;gap:9px;align-items:center;overflow-x:auto;padding:10px 4px 12px;scrollbar-width:thin}.roomMate{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:6px 9px 6px 6px;border-radius:999px;background:#fff;border:1px solid #b9dbea;color:#24495f;box-shadow:0 4px 14px rgba(44,123,163,.08)}.roomMate img{width:32px;height:32px;border-radius:50%;object-fit:cover;background:#dfeff8;border:2px solid #7ecceb}.roomMate b{font-size:11px;white-space:nowrap}.roomMate small{font-size:9px;color:#7190a3;display:block}.roomMate.me{border-color:#53bf8a;background:#f0fff7}
+.finalGameStage{display:grid;grid-template-columns:minmax(0,1fr);gap:10px}.finalGameStage.tetrisGroup{grid-template-columns:minmax(0,1fr) 300px}.tetrisPeers{display:none}.finalGameStage.tetrisGroup .tetrisPeers{display:grid;align-content:start;gap:8px}.peerTitle{font-size:12px;font-weight:900;color:#2c617d;margin:2px 0}.peerBoard{display:grid;grid-template-columns:56px 1fr;gap:8px;align-items:center;padding:8px;border-radius:12px;background:#fff;border:1px solid #b8dbea}.peerBoard.mePeer{border-color:#48bb82;background:#f3fff8}.peerAvatar{width:50px;height:50px;border-radius:14px;object-fit:cover;background:#e1f0f8}.peerInfo b{font-size:12px}.peerInfo small{display:block;color:#66889d;font-size:10px;margin:2px 0 5px}.miniTetris{display:grid;grid-template-columns:repeat(10,6px);grid-template-rows:repeat(20,6px);gap:1px;background:#d6e7ef;padding:3px;border-radius:5px;width:max-content}.miniTetris i{width:6px;height:6px;background:#f5fbff;border-radius:1px}.miniTetris i.on{background:#2caad7}.miniTetris i.live{background:#8e66d8}.peerStatus{font-size:9px;color:#52778d}.finalGameStage.tetrisGroup .finalGameFrame{height:900px}
+@media(max-width:1050px){.finalGameStage.tetrisGroup{grid-template-columns:1fr}.finalGameStage.tetrisGroup .tetrisPeers{grid-template-columns:repeat(2,minmax(0,1fr))}.peerTitle{grid-column:1/-1}}
+@media(max-width:650px){.finalGameStage.tetrisGroup .tetrisPeers{grid-template-columns:1fr}.roomMate b{font-size:10px}}
+
+/* V6 SAFE UPDATE NOTICE */
+#updateNotice{display:none;margin:10px auto 0;max-width:1180px;padding:11px 14px;border:1px solid #66b7e8;border-radius:13px;background:#eef9ff;color:#12415f;font-size:12px;font-weight:800}#updateNotice.show{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}#updateNotice a{color:#0877b9;font-weight:950}.versionPill{display:inline-flex;padding:3px 8px;border-radius:999px;background:#d9f2ff;color:#12628f;font-size:10px}
+</style>
+\n
+\n
+<style id="v10-clean-ui">
+/* structural rules retained from the stable integrated base */
+/* REV6 common broadcast scoreboard sizing: used by bingo/kill/ranking surfaces after integration */
+.ranktable{width:auto!important;max-width:620px!important;font-size:11px!important;line-height:1.1!important;table-layout:auto!important}.ranktable th,.ranktable td{padding:2px 4px!important;white-space:nowrap!important}.rank>div{grid-template-columns:30px minmax(70px,1fr) auto!important;gap:4px!important;padding:3px 5px!important;font-size:11px!important;line-height:1.15!important}.broadcast-rank,.compact-rank{width:min(100%,620px)!important}
+#bingoSetup,#bingoPlay,#moduleWorkspace{display:none!important}
+.contentCards{grid-template-columns:repeat(4,1fr)!important}
+.finalGameShell{grid-column:1/-1;margin-top:14px;border:1px solid #31516a;border-radius:16px;background:#05111b;padding:10px}
+.finalGameShell.hidden{display:none!important}.finalGameTop{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:8px}.finalGameTop>div{display:flex;flex-direction:column}.finalGameTop b{font-size:15px;color:#e9f8ff}.finalGameTop small{font-size:10px;color:#8eafc2;margin-top:2px}
+.finalGameFrame{display:block;width:100%;height:900px;border:0;border-radius:12px;background:#06111c}
+.content.selected{border-color:#55ddff!important;box-shadow:0 0 0 2px #55ddff22 inset!important;background:#0c2940!important}
+@media(max-width:900px){.contentCards{grid-template-columns:repeat(2,1fr)!important}.finalGameFrame{height:820px}}
+
+:root{
+  --bg1:#b8e8f7;--bg2:#eefaff;--ink:#18374c;--muted:#648399;--line:rgba(42,118,153,.22);
+  --glass:rgba(249,253,255,.88);--glass2:rgba(238,249,254,.9);--blue:#2fa8da;--blue2:#147eaf;
+  --navy:#123448;--navy2:#0b2737;--yellow:#ffd83d;--green:#20a875;--danger:#a94659;
+}
+*{box-sizing:border-box}
+body{background:
+ radial-gradient(circle at 12% 0%,rgba(255,255,255,.96),transparent 28%),
+ radial-gradient(circle at 86% 8%,rgba(164,226,249,.8),transparent 29%),
+ linear-gradient(145deg,var(--bg1),var(--bg2) 46%,#c8edf8 100%)!important;color:var(--ink)!important}
+.app{max-width:1180px!important;padding:12px 16px 24px!important}
+.top{padding:2px 3px 0!important;margin-bottom:8px!important}.brand h1{font-size:24px!important;color:#fff!important;text-shadow:0 2px 12px rgba(32,103,138,.22)!important}.brand p{color:#47768f!important}.status{background:rgba(255,255,255,.88)!important;color:#315c73!important;border:1px solid rgba(255,255,255,.75)!important;box-shadow:0 5px 16px rgba(44,120,153,.08)!important}
+.actionStatus{padding:6px 10px!important;margin:4px 0 8px!important;border-radius:10px!important;background:rgba(18,52,72,.92)!important;color:#f4fbff!important;border:1px solid rgba(255,255,255,.18)!important}
+.hero{padding:13px 18px!important;margin-bottom:10px!important;border-radius:18px!important;background:linear-gradient(118deg,rgba(255,255,255,.91),rgba(236,249,255,.78))!important;border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 12px 28px rgba(45,116,149,.1)!important}
+.hero .eyebrow{font-size:10px!important;color:#208dbb!important}.hero h2{font-size:20px!important;line-height:1.3!important;margin:4px 0!important;color:#214b64!important}.hero p{display:none!important}.steps{display:none!important}
+.grid{gap:10px!important}.card{padding:13px!important;border-radius:18px!important;background:var(--glass)!important;color:var(--ink)!important;border:1px solid rgba(255,255,255,.8)!important;box-shadow:0 12px 28px rgba(48,119,150,.10)!important;backdrop-filter:blur(12px)}
+.card h3{font-size:16px!important;color:#214d67!important;margin:0 0 3px!important}.desc,.field label,.hint{color:var(--muted)!important}.desc{font-size:11px!important;line-height:1.45!important}
+.formgrid{gap:7px!important;margin-top:8px!important}.field{gap:4px!important}.field label{font-size:10px!important}.field input,.field select,.managerBar input,.managerBar select,.roomSettings input,.roomSettings select,#compactContentSelect,.teamSelect,.roleSelect{background:#f8fcfe!important;color:#17394e!important;border:1px solid rgba(50,122,154,.30)!important;border-radius:11px!important;padding:8px 10px!important;box-shadow:none!important}
+.field input::placeholder,.managerBar input::placeholder{color:#86a3b3!important}.actions{margin-top:8px!important;gap:7px!important}.primary{background:linear-gradient(135deg,#36b8e5,#2389bd)!important;color:#fff!important;border:0!important;box-shadow:0 7px 16px rgba(39,145,190,.18)!important}.secondary,.miniBtn{background:rgba(248,253,255,.96)!important;color:#24506a!important;border:1px solid rgba(54,127,159,.3)!important}.danger,.dangerMini{background:#8f3c4d!important;color:#fff!important;border-color:#9e5362!important}.wide{padding:9px!important}
+.profilePreview{padding:8px!important;margin-top:8px!important;background:rgba(236,248,253,.78)!important;color:#17394e!important;border:1px solid rgba(62,132,163,.18)!important}.profilePreview b{color:#17394e!important}.profilePreview span{color:#668598!important}.avatar{width:46px!important;height:46px!important;border-color:#42b7df!important}.hint{font-size:10px!important;margin-top:7px!important;background:rgba(235,248,253,.68)!important;border-color:rgba(58,126,157,.16)!important}
+.auto{padding:7px 9px!important;margin-top:7px!important;border-radius:10px!important}.auto.warn{background:#fff6cf!important;color:#765500!important;border-color:#e8c44f!important}.auto.ok{background:#e6f8f2!important;color:#177255!important;border-color:#8fd9be!important}
+/* theme selector was visual clutter; rooms no longer ask users to choose a visual theme */
+.themes{display:none!important}
+#roomLobbyCard .desc{max-width:620px!important}#roomLobbyCard [style*="border-top"]{margin-top:10px!important;padding-top:10px!important;border-top-color:rgba(53,123,154,.16)!important}
+/* Room screen: compact control surface, not a giant dashboard */
+body.is-in-room .hero,body.is-in-room #profileCard,body.is-in-room #roomLobbyCard{display:none!important}body.is-in-room .grid{display:block!important}
+#activeRoomCard{padding:10px!important;background:rgba(249,253,255,.9)!important}.roomPanel{margin-top:6px!important;padding:10px!important;border-radius:15px!important;background:linear-gradient(135deg,rgba(238,249,254,.92),rgba(255,255,255,.88))!important;color:var(--ink)!important;border:1px solid var(--line)!important;box-shadow:none!important}
+.roomCode{font-size:20px!important;letter-spacing:.12em!important;margin:2px 0 6px!important;color:#158fbd!important}.roomMeta{gap:5px!important}.chip{padding:4px 7px!important;font-size:10px!important;background:#edf8fc!important;color:#426b81!important;border:1px solid #c8e2ec!important}
+.roomQuickBar{display:grid;grid-template-columns:minmax(150px,1fr) minmax(190px,250px) auto;gap:7px;align-items:center;margin-top:8px;padding:7px 8px;border-radius:12px;background:rgba(229,247,253,.83);border:1px solid rgba(48,126,158,.17)}.quickRoomIdentity{display:flex;gap:7px;align-items:center;min-width:0}.quickLabel{font-size:9px;font-weight:900;color:#5c8195}.quickRoomIdentity strong{color:#1d526c;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.quickHelp{font-size:10px;color:#6c8999;white-space:nowrap}
+.hostTools{margin-top:7px!important;padding:7px!important;border-radius:12px!important;background:rgba(243,251,254,.9)!important;color:var(--ink)!important;border-color:rgba(54,124,155,.18)!important}.hostToolsTitle{font-size:10px!important;color:#26789c!important}.roomSettings{gap:6px!important}.teamCountFixed{padding:7px!important;background:#edf8fc!important;color:#557b8f!important;border-color:#c8e2ec!important}.managerBar{gap:6px!important;margin-top:7px!important}
+.members{gap:5px!important;margin-top:7px!important}.teamSection{margin:6px 0 8px!important;border-radius:12px!important;background:#fff!important;border:1px solid #d5e8ef!important;overflow:hidden!important}.teamSectionTitle{padding:6px 9px!important;color:#244c64!important;background:#eaf6fb!important;border-bottom:1px solid #d7eaf1!important}.teamSection .member{background:#fff!important;color:#17384d!important;border-bottom:1px solid #e1eef3!important;padding:7px 8px!important}.teamSection .member:last-child{border-bottom:0!important}.teamSection .member b{color:#17384d!important}.teamSection .member small{color:#6e8b9c!important}.memberRight .roleChip,.memberRight .teamChip{color:#315d74!important;background:#eef8fb!important;border-color:#c7e1ea!important}.me{color:#159365!important}.pager{color:#587c90!important}.pager .miniBtn{padding:5px 8px!important}
+/* No content surface before a room, and no duplicate outer content menu after joining. */
+body:not(.is-in-room) #contentStageCard{display:none!important}.legacyContentHeading,#contentCards{display:none!important}#contentStageCard{padding:0!important;background:transparent!important;border:0!important;box-shadow:none!important;backdrop-filter:none!important}
+.finalGameShell{margin-top:8px!important;padding:9px!important;border-radius:16px!important;background:rgba(12,39,53,.96)!important;color:#f5fbff!important;border:1px solid rgba(71,151,184,.48)!important;box-shadow:0 14px 32px rgba(30,91,119,.15)!important}.finalGameTop b{color:#fff!important}.finalGameTop small{color:#b6d6e3!important}.roomRosterStrip{padding:5px 1px 7px!important}.roomMate{background:rgba(247,253,255,.96)!important;color:#1e4359!important;border-color:#c8e3ed!important}.roomMate small{color:#708a99!important}.finalGameFrame{background:#071b26!important;border-color:#355f71!important}
+/* Star-Rail-like accent: blue glass UI, one warm CTA color only */
+#createRoom{background:linear-gradient(135deg,#32b5e3,#2188bd)!important}#joinRoom{background:linear-gradient(135deg,#ffd83d,#f2bd25)!important;color:#2a3035!important;border:0!important;font-weight:900!important}
+.footer{color:#5d8296!important;margin-top:8px!important}
+@media(max-width:850px){.app{padding:8px!important}.hero{display:none!important}.roomQuickBar{grid-template-columns:1fr}.quickHelp{white-space:normal}.card{border-radius:14px!important}}
 </style>
 
 
-
-</head>
-<body>
+<style id="v14-soft-launcher-design">
+:root{--v14-sky:#dff6fb;--v14-sky2:#bfe8f2;--v14-ink:#183f53;--v14-card:#f8fdff;--v14-line:#b5dce7;--v14-cyan:#2eb7d8;--v14-blue:#438ed8;--v14-mint:#56c8a7;--v14-gold:#efc45c;--v14-deep:#103748}
+body{background:radial-gradient(circle at 74% 2%,rgba(255,255,255,.88),transparent 29%),linear-gradient(145deg,#c9edf5 0,#eaf9fc 48%,#c1e5ef 100%)!important;color:var(--v14-ink)!important}
+.hero{background:linear-gradient(118deg,rgba(247,253,255,.94),rgba(222,246,251,.91))!important;border:1px solid #b8dce6!important;color:#184255!important;box-shadow:0 18px 48px rgba(54,121,145,.12)!important}.hero h2{color:#123b51!important}.hero p{color:#5b7d8c!important}.eyebrow{color:#238caf!important}
+.card,.roomPanel,.contentPreview{background:rgba(249,253,255,.94)!important;color:#173e52!important;border-color:#b5dbe6!important;box-shadow:0 12px 32px rgba(55,118,143,.10)!important}.card h3,.roomPanel h3{color:#173e52!important}.desc,.muted,.hint,.field label{color:#628393!important}
+.actionStatus{background:rgba(18,57,75,.96)!important;color:#eefcff!important;border-color:#4e93aa!important}.primary{background:linear-gradient(135deg,#31b9da,#438fd8)!important}.secondary,.miniBtn{background:#eef9fc!important;color:#24546a!important;border-color:#a9d4e1!important}.danger{background:#8d4052!important}.status{background:rgba(255,255,255,.88)!important;color:#35667a!important}
+.roomPanel{padding:12px!important}.roomCode{color:#248eb7!important}.chip{background:#eef9fc!important;border-color:#b8dbe5!important;color:#376679!important}.member{background:#fff!important;color:#183f52!important;border-color:#bddde6!important}.member small{color:#698895!important}.me{color:#218b68!important}
+.streamerGate{display:flex;gap:9px;align-items:center;margin:8px 0 0;padding:9px 11px;border-radius:12px;background:#fff8dc;border:1px solid #edd27d;color:#715713;font-size:11px;font-weight:800}.streamerGate.ok{background:#eafbf4;border-color:#9edbc7;color:#236c58}.streamerGate.dev{background:#eef8ff;border-color:#acd6ec;color:#2b6682}
+.memberActivity{display:flex;gap:5px;flex-wrap:wrap;margin-top:4px}.actBadge{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:#edf8fb;border:1px solid #b8dce6;color:#37677a;font-size:9px;font-weight:800}.actBadge.apiOn{background:#e8fbf3;border-color:#91d7bc;color:#26735a}.actBadge.apiOff{background:#f5f8fa;color:#8296a0}.compactContentSelect{background:#fff!important;color:#1c4b60!important;border-color:#a9d4e1!important}
+.finalGameShell{background:rgba(248,253,255,.94)!important;border-color:#acd6e2!important;color:#173f52!important}.finalGameTop b{color:#173f52!important}.finalGameTop small{color:#6c8997!important}.roomMate{background:#fff!important;color:#1a4558!important;border-color:#b9dce5!important}.finalGameFrame{background:#0a2634!important}
+.apiRouterPanel{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center;padding:9px 11px;margin-top:8px;border-radius:13px;background:linear-gradient(90deg,#eaf9fc,#f8fdff);border:1px solid #add7e2}.apiRouterPanel b{color:#1f6078}.apiRouterPanel small{display:block;color:#698a98;margin-top:2px}.routerLamp{padding:5px 9px;border-radius:999px;background:#f0f5f7;color:#748d98;font-size:10px;font-weight:900}.routerLamp.on{background:#e7fbf2;color:#287057;border:1px solid #a1dbc5}
+</style>
+\n<style id="v17-team-card-css">
+.teamSection{margin:8px 0 12px!important;padding:0!important;border:1px solid #b9dbe7!important;border-radius:13px!important;background:#f8fdff!important;overflow:hidden}
+.teamSectionTitle{display:flex!important;justify-content:space-between!important;align-items:center!important;padding:7px 11px!important;margin:0!important;border:0!important;border-bottom:2px solid currentColor!important;border-radius:0!important;font-size:13px!important;font-weight:950!important;color:#123f54!important;background:#dff2f8!important}.teamSectionTitle>span:first-child{font-size:14px!important;letter-spacing:.2px}
+.teamSection>.member{display:inline-grid!important;vertical-align:top!important;width:min(360px,calc(50% - 10px))!important;grid-template-columns:42px minmax(120px,1fr)!important;gap:7px!important;margin:6px 3px 6px 6px!important;padding:7px!important;min-height:72px!important;border-radius:11px!important;background:#fff!important;box-sizing:border-box!important}.teamSection>.member .memberRight{grid-column:1/-1!important;display:flex!important;gap:4px!important;align-items:center!important;flex-wrap:wrap!important}.teamSection>.member .memberMain b{font-size:12px!important}.teamSection>.member .memberMain small{font-size:9px!important}.teamSection>.member .memberActivity{display:flex!important;gap:3px!important;flex-wrap:wrap!important}.teamSection>.member .actBadge{font-size:9px!important;padding:2px 5px!important}.teamSection>.member .teamBadge{font-weight:950!important;opacity:1!important}
+@media(max-width:850px){.teamSection>.member{width:calc(100% - 12px)!important}}
+</style>\n</head>
+<body><div id="updateNotice" role="status"></div>
 <div class="app">
   <div class="top">
-    <div class="brand"><div class="logo">🎮</div><div><h1>SOOP 콘텐츠 메이커</h1><p>CORE BUILD 4 · 참가자/팀/재접속 관리</p></div></div>
+    <div class="brand"><div class="logo">🎮</div><div><h1>종합게임 API</h1><p>종합게임 API · v1.0.0</p></div></div>
     <div id="sdkBadge" class="status">SOOP 연결 확인 중</div>
   </div>
   <div id="actionStatus" class="actionStatus idle"><span class="actionDot">○</span><span id="actionStatusText">준비됨</span></div>
   <section class="hero">
     <div class="eyebrow">BROADCAST CONTENT PLATFORM</div>
     <h2>내 방송 프로필로 들어가고,<br>우리 팀만의 방에서 콘텐츠를 시작합니다.</h2>
-    <p>빙고·킬내기·핀볼·경마·의리 사다리를 하나의 방 안에서 쓰기 위한 새 기반입니다. 검증된 공용 방 기능은 그대로 유지하고, 방장이 참가자·팀·권한을 관리하고 같은 SOOP ID가 재접속했을 때 기존 자리를 복구하도록 CORE를 완성합니다.</p>
+    <p>빙고·킬내기·핀볼·경마·사다리타기를 하나의 방 안에서 쓰기 위한 새 기반입니다. 검증된 공용 방 기능은 그대로 유지하고, 방장이 참가자·팀·권한을 관리하고 같은 SOOP ID가 재접속했을 때 기존 자리를 복구하도록 CORE를 완성합니다.</p>
     <div class="steps"><span class="step">1 프로필/방</span><span class="step">2 실시간 동기화</span><span class="step on">3 참가자 관리</span><span class="step on">4 빙고</span><span class="step">5 킬내기</span><span class="step">6 예능 콘텐츠</span><span class="step">7 방송 출력</span></div>
   </section>
 
   <div class="grid">
-    <section class="card">
+    <section id="profileCard" class="card">
       <h3>👤 내 스트리머 프로필</h3><div class="desc">프로필은 브라우저와 내 PC의 공용 저장소에 함께 저장합니다. 새 빌드/새 테스트 주소에서도 같은 SOOP ID면 다시 불러옵니다.</div>
-      <div id="autoBox" class="auto warn">SOOP 방송 정보 확인 중...</div>
+      <div id="autoBox" class="auto warn">SOOP 방송 정보 확인 중...</div><div id="streamerGate" class="streamerGate">🔐 스트리머 인증 확인 중</div>
       <div class="formgrid">
         <div class="field"><label>스트리머 이름</label><input id="profileName" placeholder="예: 김멘탈"></div>
         <div class="field"><label>SOOP ID (자동 인식 기준)</label><input id="profileSoopId" placeholder="SOOP BJ ID"></div>
@@ -259,13 +345,28 @@ select:focus,input:focus,textarea:focus{outline:2px solid rgba(83,207,255,.55);o
       <div class="roomPanel">
         <div class="desc">방 코드</div><div id="activeCode" class="roomCode">------</div>
         <div class="roomMeta"><span id="activeRoomName" class="chip"></span><span id="activeTheme" class="chip"></span><span id="activeCapacity" class="chip"></span><span id="syncChip" class="chip">실시간 동기화 중</span></div>
+        <div class="roomQuickBar">
+          <div class="quickRoomIdentity"><span class="quickLabel">콘텐츠</span><strong id="compactContentName">선택 안 됨</strong></div>
+          <select id="compactContentSelect" aria-label="방 콘텐츠 선택">
+            <option value="none">콘텐츠 선택</option>
+            <option value="bingo">배그/오버워치 빙고 · 킬/딜</option>
+            <option value="kill" hidden>배그 킬/딜 내기</option>
+            <option value="pinball">핀볼 레이스</option>
+            <option value="roulette">룰렛</option>
+            <option value="pick">추억의 뽑기판</option>
+            <option value="race">경마</option>
+            <option value="ladder">사다리타기</option>
+            <option value="tetris">테트리스</option>
+          </select>
+          <span id="compactContentHelp" class="quickHelp">내가 사용할 콘텐츠를 선택합니다. 선택한 게임에만 내 후원 API가 적용됩니다.</span>
+        </div>
 
         <div id="hostTools" class="hostTools hidden">
           <div class="hostToolsTitle">👑 방장 관리</div>
           <div class="roomSettings">
             <input id="hostRoomName" placeholder="방 이름">
             <input id="hostRoomMax" type="number" min="2" max="100" placeholder="최대 인원">
-            <div class="teamCountFixed">팀 슬롯 · 1팀 ~ 8팀</div>
+            
             <button id="saveRoomSettings" class="miniBtn">방 설정 저장</button>
           </div>
         </div>
@@ -284,14 +385,17 @@ select:focus,input:focus,textarea:focus{outline:2px solid rgba(83,207,255,.55);o
       <div class="hint">방장은 참가자를 팀 목록에서 배정하고 참가자/관전자 권한을 변경할 수 있습니다. 같은 SOOP ID로 다시 들어오면 기존 자리와 권한을 유지합니다.</div>
     </section>
 
-    <section class="card contentPreview">
-      <h3>🎬 이 방에서 사용할 콘텐츠</h3><div class="desc" id="contentStatus">방장이 콘텐츠를 선택하면 참가자 모두에게 같은 선택이 표시됩니다.</div>
-      <div class="contentCards" id="contentCards">
-        <button class="content" data-content="bingo"><div class="ico">🟦</div><b>빙고</b><small>개인/팀 미션판</small></button>
-        <button class="content" data-content="kill"><div class="ico">🎯</div><b>킬내기</b><small>킬·사망·치킨 점수</small></button>
-        <button class="content" data-content="pinball"><div class="ico">🔴</div><b>핀볼</b><small>프로필 얼굴 공</small></button>
-        <button class="content" data-content="race"><div class="ico">🏇</div><b>경마</b><small>프로필 경주</small></button>
-        <button class="content" data-content="ladder"><div class="ico">🪜</div><b>의리 사다리</b><small>랜덤 벌칙/보상</small></button>
+    <section id="contentStageCard" class="card contentPreview hidden">
+      <h3 class="legacyContentHeading" style="display:none">🎬 콘텐츠</h3><div class="desc legacyContentHeading" style="display:none" id="contentStatus"></div>
+      <div class="contentCards legacyContentHeading" id="contentCards" style="display:none">
+        <button class="content" data-content="bingo"><div class="ico">🎯</div><b>배그/오버워치 빙고 · 킬/딜</b><small>한 화면에서 모드 전환</small></button>
+        <button class="content" data-content="kill" style="display:none"><div class="ico">🎯</div><b>배그 킬/딜 내기</b><small>통합 게임 화면에서 이용</small></button>
+        <button class="content" data-content="pinball"><div class="ico">🔴</div><b>핀볼 레이스</b><small>이름 공·후원 연동</small></button>
+        <button class="content" data-content="roulette"><div class="ico">🎡</div><b>룰렛</b><small>참가자/항목 추첨</small></button>
+        <button class="content" data-content="pick"><div class="ico">🎫</div><b>추억의 뽑기판</b><small>번호 선택 · 후원 연동</small></button>
+        <button class="content" data-content="race"><div class="ico">🏇</div><b>경마</b><small>랜덤 돌발 경주</small></button>
+        <button class="content" data-content="ladder"><div class="ico">🪜</div><b>사다리타기</b><small>네이버식 경로 추첨</small></button>
+        <button class="content" data-content="tetris"><div class="ico">🧱</div><b>테트리스</b><small>일반 / API 랭킹전</small></button>
       </div>
       <div id="bingoSetup" class="bingoSetup hidden">
         <h4>🟦 빙고 기본 설정</h4>
@@ -376,18 +480,34 @@ select:focus,input:focus,textarea:focus{outline:2px solid rgba(83,207,255,.55);o
           <div id="bingoBoards" class="bingoBoards"></div>
         </div>
       </div>
+      <div id="moduleWorkspace" class="moduleWorkspace hidden"></div>
+      <div id="finalGameShell" class="finalGameShell hidden">
+        <div class="finalGameTop"><div><b id="finalGameTitle">콘텐츠 실행</b><small id="finalGameMeta">방 참가자와 연결됩니다.</small></div><button id="openGameWindow" class="miniBtn">새 창으로 열기</button></div>
+        <div id="roomRosterStrip" class="roomRosterStrip"></div>
+        <div id="finalGameStage" class="finalGameStage">
+          <iframe id="finalGameFrame" class="finalGameFrame" allow="autoplay; clipboard-write"></iframe>
+          <aside id="tetrisPeers" class="tetrisPeers"><div class="peerTitle">🧱 같이 플레이 중</div></aside>
+        </div>
+      </div>
     </section>
   </div>
-  <div class="footer">CORE BUILD 13 · 다인 후원 테스트 + 채팅 확인</div>
+  <div class="footer">종합게임 API · Release 1.0.0</div>
 </div>
 <script>
+const APP_VERSION='1.0.0';
 const PROFILE_KEY='soop_content_profile_v1';
 const CURRENT_ROOM_KEY='soop_content_current_room_clean2';
 let detected={bjId:'',bjNickname:''};
 let selectedTheme='hero';
 let profile=load(PROFILE_KEY,{name:'',soopId:'',url:'',img:''});
 let room=null;
-let currentRoomCode=localStorage.getItem(CURRENT_ROOM_KEY)||'';
+localStorage.removeItem(CURRENT_ROOM_KEY);
+let currentRoomCode=sessionStorage.getItem(CURRENT_ROOM_KEY)||'';
+const LOCAL_DEV=['127.0.0.1','localhost'].includes(location.hostname);let streamerVerified=false,apiConnected=false,lastApiEvent=0;
+function myMember(){return room&&profile?.soopId?(room.members||[]).find(m=>String(m.soopId||'').toLowerCase()===String(profile.soopId||'').toLowerCase()):null}
+function myActiveGame(){return myMember()?.activeGame||'none'}
+function canUseStreamerFeatures(){return LOCAL_DEV||streamerVerified}
+
 let pollTimer=null;
 let memberSearchText='';
 let memberTeamValue='ALL';
@@ -402,8 +522,9 @@ function renderProfile(){previewName.textContent=profile.name||'프로필 미등
 function renderAuto(){if(detected.bjId){const matched=profile.soopId&&String(profile.soopId).toLowerCase()===String(detected.bjId).toLowerCase();autoBox.className='auto';autoBox.textContent=matched?`✅ 현재 방송 ${detected.bjNickname||detected.bjId} · 저장된 내 프로필과 자동 일치`:`📡 현재 방송 감지: ${detected.bjNickname||'방송주인'} / ID ${detected.bjId} · '현재 방송 정보 사용'을 누르면 프로필에 넣습니다.`}else{autoBox.className='auto warn';autoBox.textContent='일반 브라우저에서는 SOOP 방송주인 자동 인식이 없습니다. SOOP 확장 프로그램 안에서 실행하면 자동 확인됩니다.'}}
 function escapeHtml(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 function themeLabel(t){return t==='battle'?'배틀':t==='fun'?'예능':'히어로'}
+function renderStreamerGate(){if(!window.streamerGate)return;if(LOCAL_DEV){streamerGate.className='streamerGate dev';streamerGate.textContent='🧪 로컬 개발 테스트 모드 · 정식 서버에서는 SOOP 본인 방송 인증이 필요합니다.';return}if(streamerVerified){streamerGate.className='streamerGate ok';streamerGate.textContent='✅ SOOP 스트리머 인증 완료 · 본인 방송 후원만 수신합니다.'}else{streamerGate.className='streamerGate';streamerGate.textContent='🔐 스트리머 전용 · SOOP 확장 프로그램에서 본인 방송으로 실행해야 방 기능을 사용할 수 있습니다.'}}
 function profileReady(){return !!(profile.name&&profile.soopId)}
-function setRoomCode(c){currentRoomCode=(c||'').toUpperCase();if(currentRoomCode)localStorage.setItem(CURRENT_ROOM_KEY,currentRoomCode);else localStorage.removeItem(CURRENT_ROOM_KEY)}
+function setRoomCode(c){currentRoomCode=(c||'').toUpperCase();if(currentRoomCode)sessionStorage.setItem(CURRENT_ROOM_KEY,currentRoomCode);else sessionStorage.removeItem(CURRENT_ROOM_KEY)}
 function isMeId(id){return String(id||'').toLowerCase()===String(profile.soopId||'').toLowerCase()}
 function amHost(){return !!(room&&room.members&&room.members.some(m=>isMeId(m.soopId)&&m.role==='HOST'))}
 function safeAttr(s){return escapeHtml(String(s??'')).replace(/`/g,'&#96;')}
@@ -438,18 +559,92 @@ function teamOptions(selected){
   return s;
 }
 function contentLabel(v){
-  return ({bingo:'빙고',kill:'킬내기',pinball:'핀볼',race:'경마',ladder:'의리 사다리'})[v]||'미선택';
+  return ({bingo:'배그/오버워치 빙고 · 킬/딜',kill:'배그 킬/딜 내기',pinball:'핀볼 레이스',roulette:'룰렛',pick:'추억의 뽑기판',race:'경마',ladder:'사다리타기',tetris:'테트리스'})[v]||'미선택';
+}
+function finalGameId(content){return ({bingo:'bingo',kill:'kill',pinball:'pin',roulette:'roulette',pick:'pick',race:'race',ladder:'ladder',tetris:'tetris'})[content]||''}
+function renderRoomRosterStrip(){
+  if(!window.roomRosterStrip||!room)return;
+  const game=myActiveGame();const people=(room.members||[]).filter(m=>m.role!=='VIEWER'&&(game==='none'||(m.activeGame||'none')===game));
+  roomRosterStrip.innerHTML=people.map(m=>`<div class="roomMate ${isMeId(m.soopId)?'me':''}"><img src="${m.img||initials(m.name)}" alt=""><span><b>${escapeHtml(m.name||m.soopId)}</b><small>${escapeHtml(m.team||'미배정')}${m.role==='HOST'?' · 방장':''}</small></span></div>`).join('');
+}
+function miniTetrisHtml(state){
+  const board=Array.isArray(state?.board)?state.board:[];
+  const active=Array.isArray(state?.active)?state.active:[];
+  const live=new Set(active.map(p=>`${p[0]}:${p[1]}`));
+  let out='<div class="miniTetris">';
+  for(let y=0;y<20;y++)for(let x=0;x<10;x++){const on=!!(board[y]&&board[y][x]);out+=`<i class="${on?'on ':''}${live.has(x+':'+y)?'live':''}"></i>`}
+  return out+'</div>';
+}
+function renderTetrisPeers(){
+  if(!window.tetrisPeers||!room)return;
+  const st=(room.moduleStates||{}).tetris||{};
+  const states=st.players||{};
+  const people=(room.members||[]).filter(m=>m.role!=='VIEWER'&&(m.activeGame||'none')==='tetris');
+  tetrisPeers.innerHTML='<div class="peerTitle">🧱 같이 플레이 중 · '+people.length+'명</div>'+people.map(m=>{
+    const x=states[String(m.soopId||'').toLowerCase()]||{};
+    return `<div class="peerBoard ${isMeId(m.soopId)?'mePeer':''}"><img class="peerAvatar" src="${m.img||initials(m.name)}"><div class="peerInfo"><b>${escapeHtml(m.name||m.soopId)}</b><small>${Number(x.score||0).toLocaleString()}점 · ${Number(x.lines||0)}줄 · Lv.${Number(x.level||1)}</small>${miniTetrisHtml(x)}<div class="peerStatus">${x.running?'PLAYING':(x.over?'GAME OVER':'대기 중')}</div></div></div>`;
+  }).join('');
+}
+let tetrisStateSendAt=0;
+window.addEventListener('message',async e=>{
+  if(!room||myActiveGame()!=='tetris'||e.source!==finalGameFrame.contentWindow)return;
+  const d=e.data||{};if(d.type!=='SOOP_TETRIS_STATE')return;
+  const now=Date.now();if(now-tetrisStateSendAt<900)return;tetrisStateSendAt=now;
+  try{const data=await api('/api/room/tetris/state',{code:room.code,actorId:profile.soopId,state:JSON.stringify(d.state||{})});room=data.room;renderTetrisPeers()}catch(err){console.warn('tetris state sync failed',err)}
+});
+let gameRankSendAt=0;
+window.addEventListener('message',async e=>{
+  if(!room||e.source!==finalGameFrame.contentWindow)return;
+  const d=e.data||{};if(d.type!=='SOOP_GAME_RANK_STATE'||!['bingo','kill'].includes(d.module))return;
+  const now=Date.now();if(now-gameRankSendAt<650)return;gameRankSendAt=now;
+  try{
+    const data=await api('/api/room/live/state',{code:room.code,actorId:profile.soopId,module:d.module,state:JSON.stringify(d.state||{})});
+    room=data.room;
+    const sameGame=(room.members||[]).filter(m=>m.role!=='VIEWER'&&(m.activeGame||'none')===myActiveGame());
+    finalGameFrame.contentWindow.postMessage({type:'SOOP_ROOM_RANK_STATE',members:sameGame.map(m=>({name:m.name||m.soopId,soopId:m.soopId||'',img:m.img||'',team:m.team||''})),context:{bingoMode:room.bingoMode||'individual',bingoSize:+room.bingoSize||5},live:(room.moduleStates||{}).live||{}},location.origin);
+  }catch(err){console.warn('game rank sync failed',err)}
+});
+async function syncMyActivity(game=myActiveGame(),eventTime=0){
+  if(!room||!profileReady())return;
+  const data=await api('/api/room/member/activity',{code:room.code,actorId:profile.soopId,activeGame:game,apiConnected:(apiConnected&&streamerVerified)?'1':'0',lastApiEvent:String(eventTime||lastApiEvent||0)});
+  room=data.room;
+}
+async function setMyActiveGame(game){
+  const requested=String(game||'none');
+  game=(requested==='none'||finalGameId(requested))?requested:'none';
+  await syncMyActivity(game,0);renderRoom();sendPresence();
+}
+function renderRouterStatus(){const g=myActiveGame();if(window.routerGameLabel)routerGameLabel.textContent=`현재 API 대상 · ${contentLabel(g)}`;if(window.routerExplain)routerExplain.textContent=g==='none'?'콘텐츠를 선택하면 후원이 그 게임 하나에만 연결됩니다.':`내 방송 후원 → ${contentLabel(g)}만 적용 · 다른 게임/다른 참가자에는 전달되지 않음`;if(window.routerLamp){routerLamp.textContent=(apiConnected&&streamerVerified)?'API 연결됨':'API 대기';routerLamp.className='routerLamp '+((apiConnected&&streamerVerified)?'on':'')}}
+
+function renderFinalGame(){
+  if(!window.finalGameShell||!window.finalGameFrame)return;
+  renderRouterStatus();
+  const c=myActiveGame(), gid=finalGameId(c);
+  if(window.contentStageCard)contentStageCard.classList.toggle('hidden',!room||!gid);
+  if(!room||!gid){finalGameShell.classList.add('hidden');finalGameFrame.removeAttribute('src');return}
+  finalGameShell.classList.remove('hidden');
+  finalGameTitle.textContent=contentLabel(c);
+  const sameGame=(room.members||[]).filter(m=>m.role!=='VIEWER'&&(m.activeGame||'none')===c);finalGameMeta.textContent=`방 ${room.code} · ${contentLabel(c)} 사용 ${sameGame.length}명 · 내 API는 내 방송에만 연결`;
+  renderRoomRosterStrip();
+  finalGameStage.classList.toggle('tetrisGroup',c==='tetris');
+  if(c==='tetris')renderTetrisPeers();
+  const memberNames=sameGame.map(m=>m.name||m.soopId).join('|');
+  const q=new URLSearchParams({embed:'1',game:gid,room:room.code,player:profile.name||'',playerId:profile.soopId||'',members:memberNames});
+  const next='GAME_TEST.html?'+q.toString();
+  if(finalGameFrame.dataset.src!==next){finalGameFrame.dataset.src=next;finalGameFrame.src=next}
+  setTimeout(()=>{try{finalGameFrame.contentWindow.postMessage({type:'SOOP_ROOM_PROFILES',members:sameGame.map(m=>({name:m.name||m.soopId,soopId:m.soopId||'',img:m.img||'',team:m.team||''})),bingoMode:room.bingoMode||'individual',bingoSize:+room.bingoSize||5,live:(room.moduleStates||{}).live||{}},location.origin)}catch(e){}},260)
+  openGameWindow.onclick=()=>window.open(next,'_blank','noopener');
 }
 function renderContentSelection(){
   if(!window.contentCards)return;
-  const selected=room?.content||'none';
+  const selected=myActiveGame();
   contentCards.querySelectorAll('[data-content]').forEach(btn=>{
     btn.classList.toggle('selected',btn.dataset.content===selected);
-    btn.disabled=!!room&&!amHost();
+    btn.disabled=!!room&&!canUseStreamerFeatures();
   });
   contentStatus.textContent=selected==='none'
-    ?(amHost()?'콘텐츠를 하나 선택해 주세요.':'방장이 콘텐츠를 선택하는 중입니다.')
-    :`현재 선택: ${contentLabel(selected)}${amHost()?' · 다른 콘텐츠를 누르면 변경됩니다.':''}`;
+    ?'내가 사용할 콘텐츠를 선택해 주세요.'
+    :`내 현재 게임: ${contentLabel(selected)} · SOOP 후원은 이 게임에만 적용됩니다.`;
   bingoSetup.classList.toggle('hidden',selected!=='bingo');
   if(selected==='bingo'){
     if(!isUiInteractionActive()){
@@ -460,6 +655,8 @@ function renderContentSelection(){
     bingoReady.textContent=`현재 설정 · ${(room?.bingoMode||'team')==='team'?'팀 빙고':'개인 빙고'} · ${room?.bingoSize||5}×${room?.bingoSize||5}`;
   }
   renderBingoWorkspace();
+  renderModuleWorkspace();
+  renderFinalGame();
 }
 
 
@@ -504,7 +701,7 @@ function boardMembersText(key,board){
   return (room?.members||[]).filter(m=>m.role!=='VIEWER'&&m.team===team).map(m=>m.name).join(', ')||'참가자 없음';
 }
 function renderBingoDashboard(){
-  if(!room||room.content!=='bingo')return;
+  if(!room||myActiveGame()!=='bingo')return;
   const size=Number(room.bingoSize||5);
   const entries=Object.entries(getBingoBoardsObject()).map(([key,b])=>({
     key,b,label:b.label||key,lines:bingoLineCount(b,size),done:completedCellCount(b),members:boardMembersText(key,b)
@@ -524,7 +721,7 @@ function renderBingoDashboard(){
       const b=getBingoBoardsObject()[key];
       progress=b?`${bingoLineCount(b,size)}빙고 · ${completedCellCount(b)}/${size*size}칸`:'판 대기';
     }
-    return `<div class="participantRow"><span class="teamBadge ${teamClass(m.team)}">${escapeHtml(m.team||'미배정')}</span>
+    return `<div class="participantRow"><img src="${m.img||initials(m.name)}" alt="" style="width:34px;height:34px;border-radius:10px;object-fit:cover;border:1px solid #9bcfe6"><span class="teamBadge ${teamClass(m.team)}">${escapeHtml(m.team||'미배정')}</span>
       <div><b>${escapeHtml(m.name)}${m.role==='HOST'?' 👑':''}</b><small>${m.role==='VIEWER'?'관전자':'참가자'} · ${escapeHtml(m.soopId)}</small></div>
       <strong>${progress}</strong></div>`;
   }).join('');
@@ -672,7 +869,7 @@ function renderPendingEffect(){
 }
 
 function renderBingoWorkspace(){
-  const active=!!room&&room.content==='bingo';
+  const active=!!room&&myActiveGame()==='bingo';
   bingoPlay.classList.toggle('hidden',!active);
   if(!active)return;
   bingoMissionEditor.classList.toggle('hidden',!amHost());
@@ -777,7 +974,7 @@ function renderMembers(){
         `;
         return `<div class="member ${teamClass(m.team)}">
           <img class="avatar small" src="${m.img||initials(m.name)}">
-          <div class="memberMain"><b>${escapeHtml(m.name||'이름 없음')} ${teamBadgeHtml(m.team)} ${hostMember?'<span class="me">방장</span>':''} ${self?'<span class="me">나</span>':''}</b><small>${escapeHtml(m.soopId||'SOOP ID 미등록')}</small></div>
+          <div class="memberMain"><b>${escapeHtml(m.name||'이름 없음')} ${teamBadgeHtml(m.team)} ${hostMember?'<span class="me">방장</span>':''} ${self?'<span class="me">나</span>':''}</b><small>${escapeHtml(m.soopId||'SOOP ID 미등록')}</small><div class="memberActivity"><span class="actBadge">🎮 ${escapeHtml(contentLabel(m.activeGame||'none'))}</span><span class="actBadge ${m.apiConnected?'apiOn':'apiOff'}">${m.apiConnected?'🎈 API 연결':'API 대기'}</span></div></div>
           <div class="memberRight">${controls}</div>
         </div>`;
       }).join('');
@@ -788,13 +985,25 @@ function renderMembers(){
 }
 function renderRoom(){
   const inRoom=!!room;
+  document.body.classList.toggle('is-in-room',inRoom);
   activeRoomCard.classList.toggle('hidden',!inRoom);
   roomLobbyCard.classList.toggle('hidden',inRoom);
-  if(!inRoom)return;
+  if(window.contentStageCard)contentStageCard.classList.toggle('hidden',!inRoom || myActiveGame()==='none');
+  if(!inRoom){
+    if(window.compactContentSelect)compactContentSelect.value='none';
+    if(window.compactContentName)compactContentName.textContent='선택 안 됨';
+    return;
+  }
   activeCode.textContent=room.code;
   activeRoomName.textContent=`방 · ${room.name}`;
   activeTheme.textContent=`테마 · ${themeLabel(room.theme)}`;
   activeCapacity.textContent=`인원 · ${room.members.length}/${room.max}`;
+  if(window.compactContentSelect){
+    compactContentSelect.value=myActiveGame();
+    compactContentSelect.disabled=!canUseStreamerFeatures();
+  }
+  if(window.compactContentName)compactContentName.textContent=contentLabel(myActiveGame());
+  if(window.compactContentHelp)compactContentHelp.textContent=amHost()?'콘텐츠를 바꾸면 같은 방에 즉시 적용됩니다.':'방장이 선택한 콘텐츠가 여기에 표시됩니다.';
   hostTools.classList.toggle('hidden',!amHost());
   if(amHost()){
     hostRoomName.value=room.name||'';
@@ -805,7 +1014,10 @@ function renderRoom(){
   renderMembers();
   renderContentSelection();
 }
-const API_BASE='https://soop-content-maker-server.onrender.com';
+const _serverMode=new URLSearchParams(location.search).get('server');
+const _isLocalHost=['127.0.0.1','localhost'].includes(location.hostname);
+const API_BASE=(_serverMode==='remote')?(localStorage.getItem('soop_content_api_base')||'https://soop-content-maker-server.onrender.com'):((_serverMode==='local'||_isLocalHost)?location.origin:(localStorage.getItem('soop_content_api_base')||'https://soop-content-maker-server.onrender.com'));
+console.info('[SOOP] API server:',API_BASE);
 async function api(path,params={},method='POST'){
   const opt={method,cache:'no-store'};
   let url=API_BASE+path;
@@ -900,7 +1112,7 @@ async function restoreProfileFromServer(id){
     const data=await api('/api/profile/get',{id:key},'GET');
     if(!data.found||!data.profile)return false;
     const p=data.profile;
-    profile={name:p.name||'',soopId:p.soopId||key,url:p.url||'',img:p.img||''};
+    profile={name:p.name||profile.name||'',soopId:p.soopId||profile.soopId||key,url:p.url||profile.url||'',img:p.img||profile.img||''};
     save(PROFILE_KEY,profile);
     renderProfile();renderAuto();
     return true;
@@ -937,8 +1149,8 @@ async function refreshRoom(showError=false){
     if(showError)alert(e.message);
   }
 }
-function startPolling(){if(pollTimer)clearInterval(pollTimer);pollTimer=setInterval(()=>{if(currentRoomCode)refreshRoom(false)},1000)}
-profileImage.addEventListener('change',()=>{const f=profileImage.files[0];if(!f)return;if(f.size>2.5*1024*1024){alert('사진은 2.5MB 이하로 넣어 주세요.');profileImage.value='';return}const r=new FileReader();r.onload=()=>{profile.img=r.result;renderProfile()};r.readAsDataURL(f)});
+function startPolling(){if(pollTimer)clearInterval(pollTimer);pollTimer=setInterval(()=>{if(currentRoomCode)refreshRoom(false)},1800)}
+profileImage.addEventListener('change',()=>{const f=profileImage.files[0];if(!f)return;if(f.size>2.5*1024*1024){alert('사진은 2.5MB 이하로 넣어 주세요.');profileImage.value='';return}const r=new FileReader();r.onload=()=>{profile.img=r.result;save(PROFILE_KEY,profile);renderProfile()};r.readAsDataURL(f)});
 saveProfile.addEventListener('click',async()=>{
   profile.name=profileName.value.trim();
   profile.soopId=profileSoopId.value.trim();
@@ -951,8 +1163,8 @@ saveProfile.addEventListener('click',async()=>{
 });
 useDetected.addEventListener('click',()=>{if(!detected.bjId){alert('현재 SOOP 방송 정보를 아직 감지하지 못했습니다. SOOP 확장 프로그램 안에서 실행해 주세요.');return}profileName.value=detected.bjNickname||profileName.value;profileSoopId.value=detected.bjId});
 document.querySelectorAll('.theme').forEach(b=>b.addEventListener('click',()=>{selectedTheme=b.dataset.theme;document.querySelectorAll('.theme').forEach(x=>x.classList.toggle('active',x===b))}));
-createRoom.addEventListener('click',async()=>{if(!profileReady()){alert('먼저 왼쪽에서 내 프로필을 저장해 주세요.');return}createRoom.disabled=true;try{const max=Math.max(2,Math.min(100,Number(maxPlayers.value)||8));const data=await api('/api/room/create',{name:roomName.value.trim()||'콘텐츠 방',theme:selectedTheme,max,password:roomPassword.value,nameHost:profile.name,idHost:profile.soopId,imgHost:profile.img||''});room=data.room;setRoomCode(room.code);renderRoom();alert(`방을 만들었습니다.\n방 코드: ${room.code}`)}catch(e){alert('방 만들기 실패: '+e.message)}finally{createRoom.disabled=false}});
-joinRoom.addEventListener('click',async()=>{if(!profileReady()){alert('먼저 왼쪽에서 내 프로필을 저장해 주세요.');return}const c=joinCode.value.trim().toUpperCase();if(!c){alert('방 코드를 입력해 주세요.');return}joinRoom.disabled=true;try{const data=await api('/api/room/join',{code:c,password:joinPassword.value,name:profile.name,id:profile.soopId,img:profile.img||''});room=data.room;setRoomCode(room.code);renderRoom();alert(data.reconnected?'기존 자리로 재접속했습니다.':'방 참가 완료!')}catch(e){alert('방 참가 실패: '+e.message)}finally{joinRoom.disabled=false}});
+createRoom.addEventListener('click',async()=>{if(!profileReady()){alert('먼저 왼쪽에서 내 프로필을 저장해 주세요.');return}if(!canUseStreamerFeatures()){alert('SOOP 스트리머 인증이 필요합니다. SOOP 확장 프로그램에서 본인 방송으로 실행해 주세요.');return}createRoom.disabled=true;try{const max=Math.max(2,Math.min(100,Number(maxPlayers.value)||8));const data=await api('/api/room/create',{name:roomName.value.trim()||'콘텐츠 방',theme:selectedTheme,max,password:roomPassword.value,nameHost:profile.name,idHost:profile.soopId,imgHost:profile.img||'',verified:canUseStreamerFeatures()?'1':'0'});room=data.room;setRoomCode(room.code);renderRoom();alert(`방을 만들었습니다.\n방 코드: ${room.code}`)}catch(e){alert('방 만들기 실패: '+e.message)}finally{createRoom.disabled=false}});
+joinRoom.addEventListener('click',async()=>{if(!profileReady()){alert('먼저 왼쪽에서 내 프로필을 저장해 주세요.');return}if(!canUseStreamerFeatures()){alert('SOOP 스트리머 인증이 필요합니다. SOOP 확장 프로그램에서 본인 방송으로 실행해 주세요.');return}const c=joinCode.value.trim().toUpperCase();if(!c){alert('방 코드를 입력해 주세요.');return}joinRoom.disabled=true;try{const data=await api('/api/room/join',{code:c,password:joinPassword.value,name:profile.name,id:profile.soopId,img:profile.img||'',verified:canUseStreamerFeatures()?'1':'0'});room=data.room;setRoomCode(room.code);renderRoom();alert(data.reconnected?'기존 자리로 재접속했습니다.':'방 참가 완료!')}catch(e){alert('방 참가 실패: '+e.message)}finally{joinRoom.disabled=false}});
 
 memberSearch.addEventListener('input',()=>{memberSearchText=memberSearch.value;memberPage=1;renderMembers()});
 memberTeamFilter.addEventListener('change',()=>{memberTeamValue=memberTeamFilter.value;memberPage=1;renderMembers()});
@@ -975,15 +1187,82 @@ saveRoomSettings.addEventListener('click',async()=>{
   }catch(e){alert('방 설정 변경 실패: '+e.message)}
   finally{saveRoomSettings.disabled=false}
 });
+
+function moduleState(name,defaults={}){return Object.assign({},defaults,(room?.moduleStates||{})[name]||{})}
+async function saveModuleState(name,state){
+  if(!room||!profileReady())return;
+  const data=await api('/api/room/module/save',{code:room.code,actorId:profile.soopId,module:name,state:JSON.stringify(state)});
+  room=data.room;renderModuleWorkspace();return data;
+}
+function memberSeed(){return (room?.members||[]).filter(m=>m.role!=='VIEWER').map((m,i)=>({id:m.soopId,name:m.name||m.soopId,img:m.img||'',team:m.team||'미배정',tier:Math.min(4,(i%4)+1),kills:0,deaths:0,chickens:0,score:0,history:[]}))}
+function escAttr(s){return escapeHtml(String(s??'')).replace(/"/g,'&quot;')}
+function renderModuleWorkspace(){
+  if(!window.moduleWorkspace||!room)return;
+  const c=myActiveGame();
+  moduleWorkspace.classList.toggle('hidden',!['pubgbingo','kill','pinball','roulette','race','ladder'].includes(c));
+  if(moduleWorkspace.classList.contains('hidden'))return;
+  const host=amHost();
+  if(c==='kill'){
+    const st=moduleState('kill',{target:100,killPoint:1,chickenPoint:6,death:[4,3,2,1],players:memberSeed()});
+    if(!st.players?.length)st.players=memberSeed();
+    moduleWorkspace.innerHTML=`<div class="moduleHead"><div><h4>🎯 배그 킬내기</h4><small>킬/사망/치킨을 직접 입력하면 점수가 자동 계산됩니다.</small></div><b>목표 ${st.target}점</b></div>
+    ${host?`<div class="moduleGrid"><div class="moduleBox"><label>목표 점수<input data-kcfg="target" type="number" value="${st.target}"></label></div><div class="moduleBox"><label>킬 +점수<input data-kcfg="killPoint" type="number" value="${st.killPoint}"></label></div><div class="moduleBox"><label>치킨 +점수<input data-kcfg="chickenPoint" type="number" value="${st.chickenPoint}"></label></div>${[0,1,2,3].map(i=>`<div class="moduleBox"><label>${i+1}티어 사망 -점수<input data-death="${i}" type="number" value="${st.death[i]??(4-i)}"></label></div>`).join('')}</div><div class="moduleActions"><button class="miniBtn" data-game="kill-savecfg">설정 저장</button><button class="miniBtn" data-game="kill-sync">현재 참가자 불러오기</button></div>`:''}
+    <div class="gameTable">${st.players.map((p,i)=>{const mine=String(p.id).toLowerCase()===String(profile?.soopId).toLowerCase();return `<div class="gameRow"><div><b>${escapeHtml(p.name)}</b><small> · ${escapeHtml(p.team)} · <select data-tier="${i}" ${host?'':'disabled'}>${[1,2,3,4].map(t=>`<option ${Number(p.tier)===t?'selected':''}>${t}</option>`).join('')}</select>티어</small></div><div class="scoreBig">${Number(p.score||0)}</div><div>${p.kills||0}K · ${p.deaths||0}D · 🍗${p.chickens||0}</div><div class="moduleActions">${host||mine?`<button class="miniAction" data-game="kill-act" data-i="${i}" data-a="kill">+킬</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="death">+사망</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="chicken">+치킨</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="undo">↶</button>`:''}</div></div>`}).join('')}</div>`;
+  } else if(c==='pubgbingo'){
+    const defaults=Array.from({length:25},(_,i)=>`배그 미션 ${i+1}`);const st=moduleState('pubgbingo',{missions:defaults,checked:Array(25).fill(false)});if(!st.missions?.length)st.missions=defaults;if(!st.checked?.length)st.checked=Array(25).fill(false);
+    moduleWorkspace.innerHTML=`<div class="moduleHead"><div><h4>🪖 배그 5×5 팀 빙고</h4><small>팀이 함께 체크하는 방송용 미션판입니다.</small></div><b>${st.checked.filter(Boolean).length}/25 완료</b></div>${host?`<div class="moduleBox"><label>미션 25개 · 한 줄에 하나<textarea id="pubgMissionText" rows="5">${escapeHtml(st.missions.join('\n'))}</textarea></label><div class="moduleActions"><button class="miniBtn" data-game="pubg-save">미션 저장/초기화</button><button class="miniBtn" data-game="pubg-reset">체크 초기화</button></div></div>`:''}<div class="pubgGrid">${st.missions.slice(0,25).map((m,i)=>`<button class="pubgCell ${st.checked[i]?'done':''}" data-game="pubg-toggle" data-i="${i}">${escapeHtml(m)}</button>`).join('')}</div>`;
+  } else if(c==='pinball'){
+    const st=moduleState('pinball',{threshold:30,reward:1,balls:3,lastWinner:''});
+    moduleWorkspace.innerHTML=`<div class="moduleHead"><div><h4>🔴 프로필 핀볼</h4><small>참가자 프로필 공이 떨어집니다. 별풍선 ${st.threshold}개당 공 +${st.reward}.</small></div><b>공 ${st.balls}개</b></div>${host?`<div class="moduleGrid"><div class="moduleBox"><label>별풍선 기준<input id="pinThreshold" type="number" value="${st.threshold}"></label></div><div class="moduleBox"><label>추가 공<input id="pinReward" type="number" value="${st.reward}"></label></div><div class="moduleBox"><label>현재 공<input id="pinBalls" type="number" value="${st.balls}"></label></div></div><div class="moduleActions"><button class="miniBtn" data-game="pin-save">설정 저장</button><button class="miniBtn" data-game="pin-start">핀볼 시작</button></div>`:''}<div id="pinField" class="pinField"></div>${st.lastWinner?`<div class="resultBanner">🏆 ${escapeHtml(st.lastWinner)}</div>`:''}`;drawPinField(st);
+  } else if(c==='roulette'){
+    const st=moduleState('roulette',{items:(room.members||[]).filter(m=>m.role!=='VIEWER').map(m=>m.name),last:''});
+    moduleWorkspace.innerHTML=`<div class="moduleHead"><div><h4>🎡 룰렛</h4><small>참가자 또는 원하는 항목을 한 줄씩 넣어 추첨합니다.</small></div></div>${host?`<div class="moduleBox"><label>룰렛 항목<textarea id="rouletteItems" rows="5">${escapeHtml((st.items||[]).join('\n'))}</textarea></label><div class="moduleActions"><button class="miniBtn" data-game="roulette-save">항목 저장</button><button class="miniBtn" data-game="roulette-spin">돌리기</button></div></div>`:''}<div id="rouletteWheel" class="rouletteWheel">🎯</div>${st.last?`<div class="resultBanner">당첨 · ${escapeHtml(st.last)}</div>`:''}`;
+  } else if(c==='race'){
+    const st=moduleState('race',{racers:memberSeed().map(p=>({id:p.id,name:p.name,img:p.img,progress:0})),winner:''});if(!st.racers?.length)st.racers=memberSeed().map(p=>({id:p.id,name:p.name,img:p.img,progress:0}));
+    moduleWorkspace.innerHTML=`<div class="moduleHead"><div><h4>🏇 프로필 경마</h4><small>참가자 프로필이 결승선까지 랜덤으로 질주합니다.</small></div></div>${host?`<div class="moduleActions"><button class="miniBtn" data-game="race-sync">참가자 불러오기</button><button class="miniBtn" data-game="race-start">경주 시작</button></div>`:''}<div class="raceTrack">${st.racers.map((r,i)=>`<div class="raceLane"><div class="raceRunner" id="runner${i}" style="left:${Math.min(88,r.progress||0)}%">${r.img?`<img src="${escAttr(r.img)}">`:'🏇'} ${escapeHtml(r.name)}</div></div>`).join('')}</div>${st.winner?`<div class="resultBanner">🏆 우승 ${escapeHtml(st.winner)}</div>`:''}`;
+  } else if(c==='ladder'){
+    const st=moduleState('ladder',{outcomes:['1번','2번','3번','4번'],results:[]});
+    moduleWorkspace.innerHTML=`<div class="moduleHead"><div><h4>🪜 사다리타기</h4><small>참가자와 결과를 무작위 1:1로 연결합니다.</small></div></div>${host?`<div class="moduleBox"><label>결과/벌칙/보상 · 한 줄에 하나<textarea id="ladderOutcomes" rows="5">${escapeHtml((st.outcomes||[]).join('\n'))}</textarea></label><div class="moduleActions"><button class="miniBtn" data-game="ladder-run">사다리 결과 만들기</button></div></div>`:''}<div>${(st.results||[]).map(x=>`<div class="ladderResult"><b>${escapeHtml(x.name)}</b><span>→</span><b>${escapeHtml(x.outcome)}</b></div>`).join('')}</div>`;
+  }
+}
+function drawPinField(st){setTimeout(()=>{const f=document.getElementById('pinField');if(!f)return;for(let y=35;y<230;y+=45)for(let x=25+(y%90);x<95;x+=18){const p=document.createElement('i');p.className='pinPeg';p.style.left=x+'%';p.style.top=y+'px';f.appendChild(p)}},0)}
+async function gameAction(btn){
+ const c=myActiveGame(),host=amHost();
+ if(c==='kill'){
+  let st=moduleState('kill',{target:100,killPoint:1,chickenPoint:6,death:[4,3,2,1],players:memberSeed()});if(!st.players?.length)st.players=memberSeed();
+  if(btn.dataset.game==='kill-savecfg'&&host){st.target=+document.querySelector('[data-kcfg=target]').value||100;st.killPoint=+document.querySelector('[data-kcfg=killPoint]').value||1;st.chickenPoint=+document.querySelector('[data-kcfg=chickenPoint]').value||6;st.death=[...document.querySelectorAll('[data-death]')].map(x=>+x.value||0);document.querySelectorAll('[data-tier]').forEach(x=>{if(st.players[+x.dataset.tier])st.players[+x.dataset.tier].tier=+x.value});}
+  else if(btn.dataset.game==='kill-sync'&&host){const old=Object.fromEntries((st.players||[]).map(p=>[p.id,p]));st.players=memberSeed().map(p=>Object.assign(p,old[p.id]||{}));}
+  else if(btn.dataset.game==='kill-act'){const p=st.players[+btn.dataset.i];if(!p)return;const mine=String(p.id).toLowerCase()===String(profile.soopId).toLowerCase();if(!host&&!mine)return;const a=btn.dataset.a;p.history=p.history||[];if(a==='undo'){const prev=p.history.pop();if(prev)Object.assign(p,prev)}else{p.history.push({kills:p.kills,deaths:p.deaths,chickens:p.chickens,score:p.score});if(a==='kill'){p.kills++;p.score+=Number(st.killPoint||1)}if(a==='death'){p.deaths++;p.score-=Number((st.death||[])[Number(p.tier||1)-1]||0)}if(a==='chicken'){p.chickens++;p.score+=Number(st.chickenPoint||0)}}}
+  await saveModuleState('kill',st);
+ } else if(c==='pubgbingo'){
+  let st=moduleState('pubgbingo',{missions:Array.from({length:25},(_,i)=>`배그 미션 ${i+1}`),checked:Array(25).fill(false)});if(btn.dataset.game==='pubg-save'&&host){let m=document.getElementById('pubgMissionText').value.split(/\n/).map(x=>x.trim()).filter(Boolean);while(m.length<25)m.push(`배그 미션 ${m.length+1}`);st.missions=m.slice(0,25);st.checked=Array(25).fill(false)}if(btn.dataset.game==='pubg-reset'&&host)st.checked=Array(25).fill(false);if(btn.dataset.game==='pubg-toggle'){st.checked=st.checked||Array(25).fill(false);st.checked[+btn.dataset.i]=!st.checked[+btn.dataset.i]}await saveModuleState('pubgbingo',st);
+ } else if(c==='pinball'&&host){let st=moduleState('pinball',{threshold:30,reward:1,balls:3,lastWinner:''});if(btn.dataset.game==='pin-save'){st.threshold=+pinThreshold.value||30;st.reward=+pinReward.value||1;st.balls=+pinBalls.value||1}else if(btn.dataset.game==='pin-start'){const people=(room.members||[]).filter(m=>m.role!=='VIEWER');if(!people.length)return;const w=people[Math.floor(Math.random()*people.length)];st.lastWinner=w.name;st.balls=Math.max(0,Number(st.balls||1)-1)}await saveModuleState('pinball',st);
+ } else if(c==='roulette'&&host){let st=moduleState('roulette',{items:[],last:''});if(btn.dataset.game==='roulette-save'){st.items=rouletteItems.value.split(/\n/).map(x=>x.trim()).filter(Boolean)}else if(btn.dataset.game==='roulette-spin'){let items=rouletteItems?rouletteItems.value.split(/\n/).map(x=>x.trim()).filter(Boolean):(st.items||[]);st.items=items;if(items.length)st.last=items[Math.floor(Math.random()*items.length)];const w=document.getElementById('rouletteWheel');if(w)w.classList.add('spin')}await saveModuleState('roulette',st);
+ } else if(c==='race'&&host){let st=moduleState('race',{racers:[],winner:''});if(btn.dataset.game==='race-sync'){st.racers=memberSeed().map(p=>({id:p.id,name:p.name,img:p.img,progress:0}));st.winner=''}else if(btn.dataset.game==='race-start'){if(!st.racers?.length)st.racers=memberSeed().map(p=>({id:p.id,name:p.name,img:p.img,progress:0}));st.racers.forEach(r=>r.progress=75+Math.random()*13);const w=st.racers[Math.floor(Math.random()*st.racers.length)];w.progress=92;st.winner=w.name}await saveModuleState('race',st);
+ } else if(c==='ladder'&&host){let st=moduleState('ladder',{outcomes:[],results:[]});let outs=ladderOutcomes.value.split(/\n/).map(x=>x.trim()).filter(Boolean);const people=(room.members||[]).filter(m=>m.role!=='VIEWER');while(outs.length<people.length)outs.push(`결과 ${outs.length+1}`);outs=outs.sort(()=>Math.random()-.5);st.outcomes=ladderOutcomes.value.split(/\n/).map(x=>x.trim()).filter(Boolean);st.results=people.map((p,i)=>({name:p.name,outcome:outs[i]}));await saveModuleState('ladder',st)}
+}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-game]');if(b)gameAction(b).catch(err=>alert('콘텐츠 처리 실패: '+err.message))});
+
+compactContentSelect.addEventListener('change',async()=>{
+  if(!room){compactContentSelect.value='none';return}
+  if(!canUseStreamerFeatures()){compactContentSelect.value=myActiveGame();alert('SOOP 스트리머 인증이 필요합니다.');return}
+  const next=compactContentSelect.value;
+  if(next==='none'){await setMyActiveGame('none');return}
+  compactContentSelect.disabled=true;
+  try{setActionStatus('loading','내 콘텐츠 전환 중...');await setMyActiveGame(next);setActionStatus('success',`${contentLabel(next)} · API 단독 연결`)}
+  catch(e){compactContentSelect.value=myActiveGame();setActionStatus('error','콘텐츠 변경 실패');alert('콘텐츠 변경 실패: '+e.message)}
+  finally{compactContentSelect.disabled=!canUseStreamerFeatures()}
+});
+
 contentCards.addEventListener('click',async(e)=>{
   const btn=e.target.closest('[data-content]');
-  if(!btn||!room||!amHost())return;
+  if(!btn||!room||!canUseStreamerFeatures())return;
   const label=contentLabel(btn.dataset.content);
   setActionStatus('loading',`${label} 선택 중`);
   markButton(btn,'loading',label);
   try{
-    const data=await api('/api/room/content',{code:room.code,hostId:profile.soopId,content:btn.dataset.content});
-    uiInteractionUntil=0;room=data.room;renderContentSelection();
+    await setMyActiveGame(btn.dataset.content);
+    uiInteractionUntil=0;renderContentSelection();
     setActionStatus('success',`${label} 선택 완료`);
   }catch(err){
     setActionStatus('error',`${label} 선택 실패 · ${err.message}`);
@@ -994,7 +1273,7 @@ contentCards.addEventListener('click',async(e)=>{
   }
 });
 saveBingoSettings.addEventListener('click',async()=>{
-  if(!room||!amHost()||room.content!=='bingo')return;
+  if(!room||!amHost()||myActiveGame()!=='bingo')return;
   setActionStatus('loading','빙고 설정 저장 중');
   markButton(saveBingoSettings,'loading','빙고 설정 저장');
   try{
@@ -1086,7 +1365,14 @@ saveDonationRules.addEventListener('click',async()=>{
   }
 });
 async function applyDonationEvent(count,donor='SOOP 후원자',action='BALLOON_GIFTED',actorIdOverride=''){
-  if(!room||room.content!=='bingo'||!profileReady())return;
+  if(!room||!profileReady())return;
+  if(myActiveGame()==='pinball'){
+    const st=moduleState('pinball',{threshold:30,reward:1,balls:3,lastWinner:''});
+    const add=Math.floor(Number(count||0)/Math.max(1,Number(st.threshold||30)))*Math.max(1,Number(st.reward||1));
+    if(add>0){st.balls=Number(st.balls||0)+add;await saveModuleState('pinball',st);if(action==='BALLOON_GIFTED')await sendSOOPChatAck(`[핀볼] 별풍선 ${count}개 · 공 +${add}`)}
+    return;
+  }
+  if(myActiveGame()!=='bingo')return;
   const manual=action==='BALLOON_GIFTED_TEST';
   if(manual){setActionStatus('loading',`별풍선 ${count}개 테스트 중`);markButton(testDonation,'loading','별풍선 수동 테스트')}
   try{
@@ -1102,7 +1388,9 @@ async function applyDonationEvent(count,donor='SOOP 후원자',action='BALLOON_G
         setActionStatus('success','후원 테스트 발동 · 지정 대상을 선택하세요');
         markButton(testDonation,'success','별풍선 수동 테스트');
       }else{
-        setActionStatus('success',`후원 테스트 완료 · ${Number(data.applied||0)} 적용`);
+        const mr=data.matchedRule||{};
+        const label=mr.effect?donationEffectLabel(mr.effect):'규칙 없음';
+        setActionStatus('success',`후원 테스트 완료 · ${label} · ${Number(data.applied||0)} 적용`);
         markButton(testDonation,'success','별풍선 수동 테스트');
       }
     }
@@ -1157,7 +1445,7 @@ fillSampleMissions.addEventListener('click',()=>{
   bingoMissions.value=samples.slice(0,count).join('\n');
 });
 generateBingo.addEventListener('click',async()=>{
-  if(!room||!amHost()||room.content!=='bingo')return;
+  if(!room||!amHost()||myActiveGame()!=='bingo')return;
   const lines=bingoMissions.value.replace(/\r/g,'').split('\n').map(x=>x.trim()).filter(Boolean);
   const need=Number(room.bingoSize||5)**2;
   if(lines.length<need){
@@ -1180,7 +1468,7 @@ generateBingo.addEventListener('click',async()=>{
 });
 
 reshuffleBingo.addEventListener('click',async()=>{
-  if(!room||!amHost()||room.content!=='bingo')return;
+  if(!room||!amHost()||myActiveGame()!=='bingo')return;
   setActionStatus('loading','미션 다시 섞는 중');
   markButton(reshuffleBingo,'loading','미션 다시 섞기');
   try{
@@ -1280,15 +1568,14 @@ let soopExt=null;
 function processSOOPChat(action,message){
   console.log('SOOP chat event',action,message);
   if(action==='BALLOON_GIFTED'){
-    const count=Number(message&&message.count)||0;
-    const donor=(message&&message.userNickname)||'SOOP 후원자';
-    soopApiStatus.textContent=`별풍선 수신 · ${count}개`;
-    soopApiStatus.className='apiStatus ok';
-    applyDonationEvent(count,donor,action);
-  }else if(action==='BATTLE_MISSION_GIFTED'){
-    soopApiStatus.textContent='배틀미션 후원 이벤트 수신';
-    soopApiStatus.className='apiStatus ok';
-  }
+    if(!streamerVerified){soopApiStatus.textContent='후원 차단 · 본인 스트리머 인증 불일치';soopApiStatus.className='apiStatus bad';return}
+    const count=Number(message&&message.count)||0,donor=(message&&message.userNickname)||'SOOP 후원자';
+    const messageText=(message&&(message.message||message.comment||message.text||message.chatMessage||message.memo))||'';
+    const game=myActiveGame();lastApiEvent=Date.now();
+    soopApiStatus.textContent=`${contentLabel(game)} 전용 · ${count}개 수신`;soopApiStatus.className='apiStatus ok';
+    if(game!=='none'&&finalGameFrame?.contentWindow){finalGameFrame.contentWindow.postMessage({type:'SOOP_ACTIVE_DONATION',game,count,donor,messageText},location.origin)}
+    syncMyActivity(game,lastApiEvent).catch(()=>{});sendPresence();
+  }else if(action==='BATTLE_MISSION_GIFTED'){soopApiStatus.textContent='배틀미션 후원 이벤트 수신';soopApiStatus.className='apiStatus ok'}
 }
 function initSOOP(){
   try{
@@ -1299,9 +1586,10 @@ function initSOOP(){
           bjId:broadInfo&&broadInfo.bjId?String(broadInfo.bjId):'',
           bjNickname:broadInfo&&broadInfo.bjNickname?String(broadInfo.bjNickname):''
         };
-        sdkBadge.textContent='SOOP EXTENSION READY';
-        sdkBadge.className='status ok';
-        soopApiStatus.textContent='SOOP SDK 연결 · 후원 수신 대기';
+        streamerVerified=!!(detected.bjId&&profile.soopId&&String(profile.soopId).toLowerCase()===String(detected.bjId).toLowerCase());apiConnected=true;renderStreamerGate();
+        sdkBadge.textContent=streamerVerified?'SOOP STREAMER VERIFIED':'SOOP ID 확인 필요';
+        sdkBadge.className=streamerVerified?'status ok':'status';
+        soopApiStatus.textContent=streamerVerified?'SOOP SDK 연결 · 내 방송 후원만 수신':'프로필 SOOP ID와 현재 방송 ID가 일치해야 합니다.';
         soopApiStatus.className='apiStatus ok';
         chatAckStatus.textContent=(soopExt.chat&&typeof soopExt.chat.send==='function')?'채팅 안내 준비됨':'채팅 전송 API 확인 필요';
         chatAckStatus.className=(soopExt.chat&&typeof soopExt.chat.send==='function')?'ackOk':'ackWait';
@@ -1309,7 +1597,7 @@ function initSOOP(){
           const localMatches=profile.soopId&&String(profile.soopId).toLowerCase()===detected.bjId.toLowerCase();
           if(!localMatches)await restoreProfileFromServer(detected.bjId);
         }
-        renderAuto();
+        streamerVerified=!!(detected.bjId&&profile.soopId&&String(profile.soopId).toLowerCase()===String(detected.bjId).toLowerCase());renderAuto();renderStreamerGate();if(room)syncMyActivity(myActiveGame(),0).catch(()=>{});
       });
       if(soopExt.chat&&typeof soopExt.chat.listen==='function'){
         soopExt.chat.listen((action,message)=>processSOOPChat(action,message));
@@ -1318,12 +1606,12 @@ function initSOOP(){
         soopApiStatus.className='apiStatus bad';
       }
       if(typeof soopExt.handleError==='function')soopExt.handleError(()=>{
-        sdkBadge.textContent='SOOP SDK ERROR';
+        apiConnected=false;streamerVerified=false;renderStreamerGate();sdkBadge.textContent='SOOP SDK ERROR';
         soopApiStatus.textContent='SOOP SDK 오류';
         soopApiStatus.className='apiStatus bad';
       });
     }else{
-      sdkBadge.textContent='LOCAL MODE';renderAuto();
+      apiConnected=false;streamerVerified=false;sdkBadge.textContent='LOCAL DEV MODE';renderAuto();renderStreamerGate();
       soopApiStatus.textContent='일반 브라우저 · 수동 테스트 가능';
       soopApiStatus.className='apiStatus warn';
       chatAckStatus.textContent='SOOP 안에서만 채팅 전송';
@@ -1331,11 +1619,19 @@ function initSOOP(){
       if(profile.soopId)restoreProfileFromServer(profile.soopId);
     }
   }catch(e){
-    sdkBadge.textContent='SOOP SDK ERROR';renderAuto();
+    apiConnected=false;streamerVerified=false;renderStreamerGate();sdkBadge.textContent='SOOP SDK ERROR';renderAuto();
     soopApiStatus.textContent='SOOP SDK 오류';
     soopApiStatus.className='apiStatus bad';
   }
 }
-renderProfile();renderRoom();startPolling();checkServer();if(currentRoomCode)refreshRoom(false);window.addEventListener('load',initSOOP);</script>
+
+function versionParts(v){return String(v||'0').replace(/^v/i,'').split('.').map(x=>parseInt(x,10)||0)}
+function newerVersion(latest,current){const a=versionParts(latest),b=versionParts(current),n=Math.max(a.length,b.length);for(let i=0;i<n;i++){if((a[i]||0)!==(b[i]||0))return (a[i]||0)>(b[i]||0)}return false}
+function showUpdateInfo(cfg){const el=document.getElementById('updateNotice');if(!el||!cfg)return;if(!newerVersion(cfg.latestVersion,APP_VERSION)){el.classList.remove('show');return}const msg=escapeHtml(cfg.notice||'새 버전이 준비되었습니다. 현재 콘텐츠를 마친 뒤 업데이트해 주세요.');const link=cfg.downloadUrl?`<a href="${safeAttr(cfg.downloadUrl)}" target="_blank" rel="noopener">업데이트 받기</a>`:'';el.innerHTML=`<span>🆕 <span class="versionPill">${escapeHtml(cfg.latestVersion)}</span> ${msg}</span><span>${link}</span>`;el.classList.add('show')}
+async function sendPresence(){if(!profileReady())return;try{const game=myActiveGame();const data=await api('/api/presence/heartbeat',{id:profile.soopId,name:profile.name,img:profile.img||'',room:room?.code||'',content:game,activeGame:game,apiConnected:(apiConnected&&streamerVerified)?'1':'0',streamerVerified:streamerVerified?'1':'0',lastApiEvent:String(lastApiEvent||0),version:APP_VERSION});showUpdateInfo(data.update)}catch(e){}}
+setInterval(sendPresence,15000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)sendPresence()});
+
+renderProfile();renderStreamerGate();renderRoom();startPolling();checkServer();if(profileReady())saveProfileToServer();else if(profile.soopId)restoreProfileFromServer(profile.soopId);if(currentRoomCode)refreshRoom(false);window.addEventListener('load',initSOOP);sendPresence();</script>
 </body>
 </html>
