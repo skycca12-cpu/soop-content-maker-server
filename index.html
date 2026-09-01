@@ -499,12 +499,13 @@ const PROFILE_KEY='soop_content_profile_v1';
 const CURRENT_ROOM_KEY='soop_content_current_room_clean2';
 let detected={bjId:'',bjNickname:''};
 let selectedTheme='hero';
-let profile=load(PROFILE_KEY,{name:'',soopId:'',url:'',img:''});
+let profile=load(PROFILE_KEY,{name:'',soopId:'',userKey:'',url:'',img:''});
 let room=null;
 localStorage.removeItem(CURRENT_ROOM_KEY);
 let currentRoomCode=sessionStorage.getItem(CURRENT_ROOM_KEY)||'';
 const LOCAL_DEV=['127.0.0.1','localhost'].includes(location.hostname);let streamerVerified=false,apiConnected=false,lastApiEvent=0;
-function myMember(){return room&&profile?.soopId?(room.members||[]).find(m=>String(m.soopId||'').toLowerCase()===String(profile.soopId||'').toLowerCase()):null}
+function privateUserId(){return String(profile?.userKey||profile?.soopId||'').trim()}
+function myMember(){const id=privateUserId();return room&&id?(room.members||[]).find(m=>String(m.soopId||'').toLowerCase()===id.toLowerCase()):null}
 function myActiveGame(){return myMember()?.activeGame||'none'}
 function canUseStreamerFeatures(){return LOCAL_DEV||streamerVerified}
 
@@ -525,7 +526,7 @@ function themeLabel(t){return t==='battle'?'배틀':t==='fun'?'예능':'히어�
 function renderStreamerGate(){if(!window.streamerGate)return;if(LOCAL_DEV){streamerGate.className='streamerGate dev';streamerGate.textContent='🧪 로컬 개발 테스트 모드 · 정식 서버에서는 SOOP 본인 방송 인증이 필요합니다.';return}if(streamerVerified){streamerGate.className='streamerGate ok';streamerGate.textContent='✅ SOOP 스트리머 인증 완료 · 본인 방송 후원만 수신합니다.'}else{streamerGate.className='streamerGate';streamerGate.textContent='🔐 스트리머 전용 · SOOP 확장 프로그램에서 본인 방송으로 실행해야 방 기능을 사용할 수 있습니다.'}}
 function profileReady(){return !!(profile.name&&profile.soopId)}
 function setRoomCode(c){currentRoomCode=(c||'').toUpperCase();if(currentRoomCode)sessionStorage.setItem(CURRENT_ROOM_KEY,currentRoomCode);else sessionStorage.removeItem(CURRENT_ROOM_KEY)}
-function isMeId(id){return String(id||'').toLowerCase()===String(profile.soopId||'').toLowerCase()}
+function isMeId(id){return String(id||'').toLowerCase()===privateUserId().toLowerCase()}
 function amHost(){return !!(room&&room.members&&room.members.some(m=>isMeId(m.soopId)&&m.role==='HOST'))}
 function safeAttr(s){return escapeHtml(String(s??'')).replace(/`/g,'&#96;')}
 function normalizedTeamName(team){
@@ -629,7 +630,7 @@ function renderFinalGame(){
   finalGameStage.classList.toggle('tetrisGroup',c==='tetris');
   if(c==='tetris')renderTetrisPeers();
   const memberNames=sameGame.map(m=>m.name||m.soopId).join('|');
-  const q=new URLSearchParams({embed:'1',game:gid,room:room.code,player:profile.name||'',playerId:profile.soopId||'',members:memberNames});
+  const q=new URLSearchParams({embed:'1',game:gid,room:room.code,player:profile.name||'',playerId:privateUserId(),members:memberNames});
   const next='GAME_TEST.html?'+q.toString();
   if(finalGameFrame.dataset.src!==next){finalGameFrame.dataset.src=next;finalGameFrame.src=next}
   setTimeout(()=>{try{finalGameFrame.contentWindow.postMessage({type:'SOOP_ROOM_PROFILES',members:sameGame.map(m=>({name:m.name||m.soopId,soopId:m.soopId||'',img:m.img||'',team:m.team||''})),bingoMode:room.bingoMode||'individual',bingoSize:+room.bingoSize||5,live:(room.moduleStates||{}).live||{}},location.origin)}catch(e){}},260)
@@ -679,7 +680,7 @@ function canControlBoard(key){
   const me=(room.members||[]).find(m=>isMeId(m.soopId));
   if(!me||me.role==='VIEWER')return false;
   if(me.role==='HOST')return true;
-  if((room.bingoMode||'team')==='individual')return key===`P:${String(profile.soopId).toLowerCase()}`;
+  if((room.bingoMode||'team')==='individual')return key===`P:${privateUserId().toLowerCase()}`;
   return key===`T:${me.team||''}`;
 }
 
@@ -1018,11 +1019,34 @@ const _serverMode=new URLSearchParams(location.search).get('server');
 const _isLocalHost=['127.0.0.1','localhost'].includes(location.hostname);
 const API_BASE=(_serverMode==='remote')?(localStorage.getItem('soop_content_api_base')||'https://soop-content-maker-server.onrender.com'):((_serverMode==='local'||_isLocalHost)?location.origin:(localStorage.getItem('soop_content_api_base')||'https://soop-content-maker-server.onrender.com'));
 console.info('[SOOP] API server:',API_BASE);
+const PRIVACY_ID_FIELDS=new Set(['soopId','id','idHost','hostId','actorId','playerId']);
+async function sha256UserKey(value){
+  const normalized=String(value||'').trim().toLowerCase();
+  if(!normalized)return '';
+  if(/^sha256:[0-9a-f]{64}$/i.test(normalized))return normalized.toLowerCase();
+  const bytes=new TextEncoder().encode('soop-ext-v1|'+normalized);
+  const digest=await crypto.subtle.digest('SHA-256',bytes);
+  return 'sha256:'+Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+}
+async function privacySafeParams(params={}){
+  const out={...params};
+  const raw=String(profile?.soopId||'').trim();
+  if(!raw)return out;
+  const key=await sha256UserKey(raw);
+  if(key){profile.userKey=key;try{save(PROFILE_KEY,profile)}catch(_){}}
+  for(const field of PRIVACY_ID_FIELDS){
+    if(!(field in out))continue;
+    const v=String(out[field]??'').trim();
+    if(v&&v.toLowerCase()===raw.toLowerCase())out[field]=key;
+  }
+  return out;
+}
 async function api(path,params={},method='POST'){
+  const safeParams=await privacySafeParams(params);
   const opt={method,cache:'no-store'};
   let url=API_BASE+path;
-  if(method==='GET'){const q=new URLSearchParams(params);if([...q].length)url+='?'+q.toString()}
-  else{opt.headers={'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'};opt.body=new URLSearchParams(params).toString()}
+  if(method==='GET'){const q=new URLSearchParams(safeParams);if([...q].length)url+='?'+q.toString()}
+  else{opt.headers={'Content-Type':'application/x-www-form-urlencoded;charset=UTF-8'};opt.body=new URLSearchParams(safeParams).toString()}
   const res=await fetch(url,opt);let data=null;try{data=await res.json()}catch{throw new Error('방 서버 응답을 읽을 수 없습니다.')}
   if(!res.ok||!data.ok)throw new Error(data&&data.message?data.message:'방 서버 오류가 발생했습니다.');return data;
 }
@@ -1109,10 +1133,11 @@ async function restoreProfileFromServer(id){
   const key=String(id||'').trim();
   if(!key)return false;
   try{
-    const data=await api('/api/profile/get',{id:key},'GET');
+    const lookupKey=await sha256UserKey(key);
+    const data=await api('/api/profile/get',{id:lookupKey},'GET');
     if(!data.found||!data.profile)return false;
     const p=data.profile;
-    profile={name:p.name||profile.name||'',soopId:p.soopId||profile.soopId||key,url:p.url||profile.url||'',img:p.img||profile.img||''};
+    profile={name:p.name||profile.name||'',soopId:profile.soopId||key,userKey:p.soopId||profile.userKey||'',url:p.url||profile.url||'',img:p.img||profile.img||''};
     save(PROFILE_KEY,profile);
     renderProfile();renderAuto();
     return true;
@@ -1153,7 +1178,9 @@ function startPolling(){if(pollTimer)clearInterval(pollTimer);pollTimer=setInter
 profileImage.addEventListener('change',()=>{const f=profileImage.files[0];if(!f)return;if(f.size>2.5*1024*1024){alert('사진은 2.5MB 이하로 넣어 주세요.');profileImage.value='';return}const r=new FileReader();r.onload=()=>{profile.img=r.result;save(PROFILE_KEY,profile);renderProfile()};r.readAsDataURL(f)});
 saveProfile.addEventListener('click',async()=>{
   profile.name=profileName.value.trim();
-  profile.soopId=profileSoopId.value.trim();
+  const nextSoopId=profileSoopId.value.trim();
+  if(String(profile.soopId||'').trim().toLowerCase()!==nextSoopId.toLowerCase())profile.userKey='';
+  profile.soopId=nextSoopId;
   profile.url=profileUrl.value.trim();
   if(!profile.name||!profile.soopId){alert('스트리머 이름과 SOOP ID는 꼭 입력해 주세요.');return}
   save(PROFILE_KEY,profile);
@@ -1161,7 +1188,7 @@ saveProfile.addEventListener('click',async()=>{
   const serverSaved=await saveProfileToServer();
   alert(serverSaved?'프로필을 저장했습니다.\n새 테스트 주소로 바뀌어도 SOOP ID로 다시 불러옵니다.':'프로필은 이 브라우저에 저장됐지만 서버 저장에 실패했습니다.');
 });
-useDetected.addEventListener('click',()=>{if(!detected.bjId){alert('현재 SOOP 방송 정보를 아직 감지하지 못했습니다. SOOP 확장 프로그램 안에서 실행해 주세요.');return}profileName.value=detected.bjNickname||profileName.value;profileSoopId.value=detected.bjId});
+useDetected.addEventListener('click',()=>{if(!detected.bjId){alert('현재 SOOP 방송 정보를 아직 감지하지 못했습니다. SOOP 확장 프로그램 안에서 실행해 주세요.');return}profileSoopId.value=detected.bjId});
 document.querySelectorAll('.theme').forEach(b=>b.addEventListener('click',()=>{selectedTheme=b.dataset.theme;document.querySelectorAll('.theme').forEach(x=>x.classList.toggle('active',x===b))}));
 createRoom.addEventListener('click',async()=>{if(!profileReady()){alert('먼저 왼쪽에서 내 프로필을 저장해 주세요.');return}if(!canUseStreamerFeatures()){alert('SOOP 스트리머 인증이 필요합니다. SOOP 확장 프로그램에서 본인 방송으로 실행해 주세요.');return}createRoom.disabled=true;try{const max=Math.max(2,Math.min(100,Number(maxPlayers.value)||8));const data=await api('/api/room/create',{name:roomName.value.trim()||'콘텐츠 방',theme:selectedTheme,max,password:roomPassword.value,nameHost:profile.name,idHost:profile.soopId,imgHost:profile.img||'',verified:canUseStreamerFeatures()?'1':'0'});room=data.room;setRoomCode(room.code);renderRoom();alert(`방을 만들었습니다.\n방 코드: ${room.code}`)}catch(e){alert('방 만들기 실패: '+e.message)}finally{createRoom.disabled=false}});
 joinRoom.addEventListener('click',async()=>{if(!profileReady()){alert('먼저 왼쪽에서 내 프로필을 저장해 주세요.');return}if(!canUseStreamerFeatures()){alert('SOOP 스트리머 인증이 필요합니다. SOOP 확장 프로그램에서 본인 방송으로 실행해 주세요.');return}const c=joinCode.value.trim().toUpperCase();if(!c){alert('방 코드를 입력해 주세요.');return}joinRoom.disabled=true;try{const data=await api('/api/room/join',{code:c,password:joinPassword.value,name:profile.name,id:profile.soopId,img:profile.img||'',verified:canUseStreamerFeatures()?'1':'0'});room=data.room;setRoomCode(room.code);renderRoom();alert(data.reconnected?'기존 자리로 재접속했습니다.':'방 참가 완료!')}catch(e){alert('방 참가 실패: '+e.message)}finally{joinRoom.disabled=false}});
@@ -1207,7 +1234,7 @@ function renderModuleWorkspace(){
     if(!st.players?.length)st.players=memberSeed();
     moduleWorkspace.innerHTML=`<div class="moduleHead"><div><h4>🎯 배그 킬내기</h4><small>킬/사망/치킨을 직접 입력하면 점수가 자동 계산됩니다.</small></div><b>목표 ${st.target}점</b></div>
     ${host?`<div class="moduleGrid"><div class="moduleBox"><label>목표 점수<input data-kcfg="target" type="number" value="${st.target}"></label></div><div class="moduleBox"><label>킬 +점수<input data-kcfg="killPoint" type="number" value="${st.killPoint}"></label></div><div class="moduleBox"><label>치킨 +점수<input data-kcfg="chickenPoint" type="number" value="${st.chickenPoint}"></label></div>${[0,1,2,3].map(i=>`<div class="moduleBox"><label>${i+1}티어 사망 -점수<input data-death="${i}" type="number" value="${st.death[i]??(4-i)}"></label></div>`).join('')}</div><div class="moduleActions"><button class="miniBtn" data-game="kill-savecfg">설정 저장</button><button class="miniBtn" data-game="kill-sync">현재 참가자 불러오기</button></div>`:''}
-    <div class="gameTable">${st.players.map((p,i)=>{const mine=String(p.id).toLowerCase()===String(profile?.soopId).toLowerCase();return `<div class="gameRow"><div><b>${escapeHtml(p.name)}</b><small> · ${escapeHtml(p.team)} · <select data-tier="${i}" ${host?'':'disabled'}>${[1,2,3,4].map(t=>`<option ${Number(p.tier)===t?'selected':''}>${t}</option>`).join('')}</select>티어</small></div><div class="scoreBig">${Number(p.score||0)}</div><div>${p.kills||0}K · ${p.deaths||0}D · 🍗${p.chickens||0}</div><div class="moduleActions">${host||mine?`<button class="miniAction" data-game="kill-act" data-i="${i}" data-a="kill">+킬</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="death">+사망</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="chicken">+치킨</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="undo">↶</button>`:''}</div></div>`}).join('')}</div>`;
+    <div class="gameTable">${st.players.map((p,i)=>{const mine=String(p.id).toLowerCase()===privateUserId().toLowerCase();return `<div class="gameRow"><div><b>${escapeHtml(p.name)}</b><small> · ${escapeHtml(p.team)} · <select data-tier="${i}" ${host?'':'disabled'}>${[1,2,3,4].map(t=>`<option ${Number(p.tier)===t?'selected':''}>${t}</option>`).join('')}</select>티어</small></div><div class="scoreBig">${Number(p.score||0)}</div><div>${p.kills||0}K · ${p.deaths||0}D · 🍗${p.chickens||0}</div><div class="moduleActions">${host||mine?`<button class="miniAction" data-game="kill-act" data-i="${i}" data-a="kill">+킬</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="death">+사망</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="chicken">+치킨</button><button class="miniAction" data-game="kill-act" data-i="${i}" data-a="undo">↶</button>`:''}</div></div>`}).join('')}</div>`;
   } else if(c==='pubgbingo'){
     const defaults=Array.from({length:25},(_,i)=>`배그 미션 ${i+1}`);const st=moduleState('pubgbingo',{missions:defaults,checked:Array(25).fill(false)});if(!st.missions?.length)st.missions=defaults;if(!st.checked?.length)st.checked=Array(25).fill(false);
     moduleWorkspace.innerHTML=`<div class="moduleHead"><div><h4>🪖 배그 5×5 팀 빙고</h4><small>팀이 함께 체크하는 방송용 미션판입니다.</small></div><b>${st.checked.filter(Boolean).length}/25 완료</b></div>${host?`<div class="moduleBox"><label>미션 25개 · 한 줄에 하나<textarea id="pubgMissionText" rows="5">${escapeHtml(st.missions.join('\n'))}</textarea></label><div class="moduleActions"><button class="miniBtn" data-game="pubg-save">미션 저장/초기화</button><button class="miniBtn" data-game="pubg-reset">체크 초기화</button></div></div>`:''}<div class="pubgGrid">${st.missions.slice(0,25).map((m,i)=>`<button class="pubgCell ${st.checked[i]?'done':''}" data-game="pubg-toggle" data-i="${i}">${escapeHtml(m)}</button>`).join('')}</div>`;
@@ -1232,7 +1259,7 @@ async function gameAction(btn){
   let st=moduleState('kill',{target:100,killPoint:1,chickenPoint:6,death:[4,3,2,1],players:memberSeed()});if(!st.players?.length)st.players=memberSeed();
   if(btn.dataset.game==='kill-savecfg'&&host){st.target=+document.querySelector('[data-kcfg=target]').value||100;st.killPoint=+document.querySelector('[data-kcfg=killPoint]').value||1;st.chickenPoint=+document.querySelector('[data-kcfg=chickenPoint]').value||6;st.death=[...document.querySelectorAll('[data-death]')].map(x=>+x.value||0);document.querySelectorAll('[data-tier]').forEach(x=>{if(st.players[+x.dataset.tier])st.players[+x.dataset.tier].tier=+x.value});}
   else if(btn.dataset.game==='kill-sync'&&host){const old=Object.fromEntries((st.players||[]).map(p=>[p.id,p]));st.players=memberSeed().map(p=>Object.assign(p,old[p.id]||{}));}
-  else if(btn.dataset.game==='kill-act'){const p=st.players[+btn.dataset.i];if(!p)return;const mine=String(p.id).toLowerCase()===String(profile.soopId).toLowerCase();if(!host&&!mine)return;const a=btn.dataset.a;p.history=p.history||[];if(a==='undo'){const prev=p.history.pop();if(prev)Object.assign(p,prev)}else{p.history.push({kills:p.kills,deaths:p.deaths,chickens:p.chickens,score:p.score});if(a==='kill'){p.kills++;p.score+=Number(st.killPoint||1)}if(a==='death'){p.deaths++;p.score-=Number((st.death||[])[Number(p.tier||1)-1]||0)}if(a==='chicken'){p.chickens++;p.score+=Number(st.chickenPoint||0)}}}
+  else if(btn.dataset.game==='kill-act'){const p=st.players[+btn.dataset.i];if(!p)return;const mine=String(p.id).toLowerCase()===privateUserId().toLowerCase();if(!host&&!mine)return;const a=btn.dataset.a;p.history=p.history||[];if(a==='undo'){const prev=p.history.pop();if(prev)Object.assign(p,prev)}else{p.history.push({kills:p.kills,deaths:p.deaths,chickens:p.chickens,score:p.score});if(a==='kill'){p.kills++;p.score+=Number(st.killPoint||1)}if(a==='death'){p.deaths++;p.score-=Number((st.death||[])[Number(p.tier||1)-1]||0)}if(a==='chicken'){p.chickens++;p.score+=Number(st.chickenPoint||0)}}}
   await saveModuleState('kill',st);
  } else if(c==='pubgbingo'){
   let st=moduleState('pubgbingo',{missions:Array.from({length:25},(_,i)=>`배그 미션 ${i+1}`),checked:Array(25).fill(false)});if(btn.dataset.game==='pubg-save'&&host){let m=document.getElementById('pubgMissionText').value.split(/\n/).map(x=>x.trim()).filter(Boolean);while(m.length<25)m.push(`배그 미션 ${m.length+1}`);st.missions=m.slice(0,25);st.checked=Array(25).fill(false)}if(btn.dataset.game==='pubg-reset'&&host)st.checked=Array(25).fill(false);if(btn.dataset.game==='pubg-toggle'){st.checked=st.checked||Array(25).fill(false);st.checked[+btn.dataset.i]=!st.checked[+btn.dataset.i]}await saveModuleState('pubgbingo',st);
@@ -1377,7 +1404,8 @@ async function applyDonationEvent(count,donor='SOOP 후원자',action='BALLOON_G
   if(manual){setActionStatus('loading',`별풍선 ${count}개 테스트 중`);markButton(testDonation,'loading','별풍선 수동 테스트')}
   try{
     const actorId=actorIdOverride||profile.soopId;
-    const data=await api('/api/room/donation/apply',{code:room.code,actorId,count:String(count),donor,action});
+    const donorForServer=action==='BALLOON_GIFTED'?'SOOP 후원자':donor;
+    const data=await api('/api/room/donation/apply',{code:room.code,actorId,count:String(count),donor:donorForServer,action});
     room=data.room;renderBingoWorkspace();
     if(action==='BALLOON_GIFTED'){
       const msg='[빙고] '+effectSummaryFromResult(data,count);
@@ -1632,6 +1660,6 @@ async function sendPresence(){if(!profileReady())return;try{const game=myActiveG
 setInterval(sendPresence,15000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)sendPresence()});
 
-renderProfile();renderStreamerGate();renderRoom();startPolling();checkServer();if(profileReady())saveProfileToServer();else if(profile.soopId)restoreProfileFromServer(profile.soopId);if(currentRoomCode)refreshRoom(false);window.addEventListener('load',initSOOP);sendPresence();</script>
+renderProfile();renderStreamerGate();renderRoom();startPolling();checkServer();(async()=>{if(profile.soopId){try{profile.userKey=await sha256UserKey(profile.soopId);save(PROFILE_KEY,profile)}catch(_){}}if(profileReady())await saveProfileToServer();else if(profile.soopId)await restoreProfileFromServer(profile.soopId);if(currentRoomCode)refreshRoom(false);sendPresence()})();window.addEventListener('load',initSOOP);</script>
 </body>
 </html>

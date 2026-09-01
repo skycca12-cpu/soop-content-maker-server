@@ -44,6 +44,8 @@ function Find-ProfileByName($name) {
   foreach($file in Get-ChildItem -Path $profileRoot -Filter '*.json' -File -ErrorAction SilentlyContinue){
     try{
       $p=[IO.File]::ReadAllText($file.FullName,[Text.Encoding]::UTF8)|ConvertFrom-Json
+      # Ignore legacy records that contain a raw identifier. Only privacy-safe hashed records participate.
+      if(-not (Is-HashedUserKey $p.soopId)){ continue }
       if((Normalize-Name $p.name) -eq $n){ return $p }
     }catch{}
   }
@@ -62,6 +64,11 @@ function Clean-Presence {
   foreach($k in @($presence.Keys)){ if($now-[int64]$presence[$k].lastSeen -gt 90000){ $presence.Remove($k) } }
 }
 
+function Is-HashedUserKey($value) {
+  $v = (''+$value).Trim().ToLower()
+  return ($v -match '^sha256:[0-9a-f]{64}$')
+}
+
 function Get-ProfileFile($id) {
   $normalized = (''+$id).Trim().ToLower()
   $sha = [Security.Cryptography.SHA256]::Create()
@@ -76,6 +83,7 @@ function Get-ProfileFile($id) {
 }
 
 function Save-Profile($f) {
+  # Privacy: this field is an irreversible SHA-256 key generated in the client. Raw SOOP user IDs are never accepted by the external API.
   $id = (''+$f['soopId']).Trim()
   if ([string]::IsNullOrWhiteSpace($id)) { return $null }
   $obj = [ordered]@{
@@ -437,7 +445,7 @@ while($listener.IsListening){
     if ($path -eq '/api/presence/heartbeat' -and $req.HttpMethod -eq 'POST') {
       $f=Read-Form $req
       $id=(''+$f['id']).Trim().ToLower()
-      if(-not [string]::IsNullOrWhiteSpace($id)){
+      if(-not [string]::IsNullOrWhiteSpace($id) -and (Is-HashedUserKey $id)){
         $presence[$id]=[ordered]@{
           id=$f['id']; name=$f['name']; img=$f['img']; room=$f['room']; content=$f['content']; activeGame=$f['activeGame']; version=$f['version'];
           apiConnected=((''+$f['apiConnected']).Trim() -eq '1'); streamerVerified=((''+$f['streamerVerified']).Trim() -eq '1'); lastApiEvent=$f['lastApiEvent'];
@@ -471,8 +479,8 @@ while($listener.IsListening){
 
     if ($path -eq '/api/profile/save' -and $req.HttpMethod -eq 'POST') {
       $f = Read-Form $req
-      if ([string]::IsNullOrWhiteSpace($f['name']) -or [string]::IsNullOrWhiteSpace($f['soopId'])) {
-        Send-Json $ctx ([ordered]@{ok=$false;message='스트리머 이름과 SOOP ID가 필요합니다.'}) 400
+      if ([string]::IsNullOrWhiteSpace($f['name']) -or -not (Is-HashedUserKey $f['soopId'])) {
+        Send-Json $ctx ([ordered]@{ok=$false;message='스트리머 이름과 SHA-256 사용자 키가 필요합니다.'}) 400
         continue
       }
       $existingByName = Find-ProfileByName $f['name']
@@ -487,8 +495,8 @@ while($listener.IsListening){
 
     if ($path -eq '/api/profile/get' -and $req.HttpMethod -eq 'GET') {
       $id = (''+$req.QueryString['id']).Trim()
-      if ([string]::IsNullOrWhiteSpace($id)) {
-        Send-Json $ctx ([ordered]@{ok=$false;message='SOOP ID가 필요합니다.'}) 400
+      if (-not (Is-HashedUserKey $id)) {
+        Send-Json $ctx ([ordered]@{ok=$false;message='SHA-256 사용자 키가 필요합니다.'}) 400
         continue
       }
       $saved = Load-Profile $id
@@ -502,8 +510,8 @@ while($listener.IsListening){
 
     if ($path -eq '/api/room/create' -and $req.HttpMethod -eq 'POST') {
       $f = Read-Form $req
-      if ([string]::IsNullOrWhiteSpace($f['nameHost']) -or [string]::IsNullOrWhiteSpace($f['idHost'])) {
-        Send-Json $ctx ([ordered]@{ok=$false; message='프로필 이름/SOOP ID가 필요합니다.'}) 400
+      if ([string]::IsNullOrWhiteSpace($f['nameHost']) -or -not (Is-HashedUserKey $f['idHost'])) {
+        Send-Json $ctx ([ordered]@{ok=$false; message='프로필 이름/SHA-256 사용자 키가 필요합니다.'}) 400
         continue
       }
       if(-not (Streamer-Gate-OK $f['verified'])) { Send-Json $ctx ([ordered]@{ok=$false;message='SOOP 스트리머 인증이 필요합니다. SOOP 확장 프로그램에서 본인 방송으로 실행해 주세요.'}) 403; continue }
@@ -537,7 +545,7 @@ while($listener.IsListening){
         Send-Json $ctx ([ordered]@{ok=$false;message='비밀번호가 맞지 않습니다.'}) 403; continue
       }
       $id = (''+$f['id']).Trim()
-      if ([string]::IsNullOrWhiteSpace($id)) { Send-Json $ctx ([ordered]@{ok=$false;message='SOOP ID가 필요합니다.'}) 400; continue }
+      if (-not (Is-HashedUserKey $id)) { Send-Json $ctx ([ordered]@{ok=$false;message='SHA-256 사용자 키가 필요합니다.'}) 400; continue }
       if(-not (Streamer-Gate-OK $f['verified'])) { Send-Json $ctx ([ordered]@{ok=$false;message='SOOP 스트리머 인증이 필요합니다. SOOP 확장 프로그램에서 본인 방송으로 실행해 주세요.'}) 403; continue }
       $joinName=(''+$f['name']).Trim()
       $dupName=@($room.members | Where-Object { (Normalize-Name $_.name) -eq (Normalize-Name $joinName) -and (''+$_.soopId).ToLower() -ne $id.ToLower() }) | Select-Object -First 1
